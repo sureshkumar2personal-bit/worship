@@ -8,6 +8,7 @@ function Flame({ position = [0, 0, 0] }) {
   const innerFlameRef = useRef()
   const glowRef = useRef()
   const lightRef = useRef()
+  const flickerRef = useRef()
 
   const outerMaterial = useMemo(() => {
     return new THREE.MeshBasicMaterial({
@@ -79,6 +80,11 @@ function Flame({ position = [0, 0, 0] }) {
     if (lightRef.current) {
       lightRef.current.intensity = 2 + Math.sin(time * 20) * 0.8 + Math.sin(time * 35) * 0.4
     }
+
+    if (flickerRef.current) {
+      const scaleY = 1 + Math.sin(time * 8) * 0.05
+      flickerRef.current.scale.y = scaleY
+    }
   })
 
   return (
@@ -115,6 +121,11 @@ function Flame({ position = [0, 0, 0] }) {
       <mesh position={[0, 0.08, 0]}>
         <sphereGeometry args={[0.04, 8, 8]} />
         <primitive object={coreMaterial} />
+      </mesh>
+
+      <mesh ref={flickerRef} position={[0, 0.3, 0]}>
+        <sphereGeometry args={[0.06, 8, 8]} />
+        <meshBasicMaterial color="#ffaa00" transparent opacity={0.4} />
       </mesh>
     </group>
   )

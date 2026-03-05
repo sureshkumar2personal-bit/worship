@@ -224,6 +224,14 @@ function FireParticles({ position = [0, 0, 0], count = 100, velocity = { current
         distance={4}
         decay={2}
       />
+
+      <pointLight
+        position={[0, 0.2, 0]}
+        intensity={1.5}
+        color="#ffaa55"
+        distance={3}
+        decay={2}
+      />
     </group>
   )
 }

@@ -4,6 +4,8 @@ import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
+import IncenseStand from './IncenseStand'
+import TempleDust from './TempleDust'
 
 function GLBModel() {
   const { scene } = useGLTF('/sample.glb')
@@ -55,6 +57,7 @@ function Scene() {
     <>
       <color attach="background" args={['#1a0a2e']} />
       <ambientLight intensity={0.3} color="#663399" />
+      <ambientLight intensity={0.3} color="#554433" />
       <pointLight
         position={[0, 0.5, 0]}
         intensity={1}
@@ -101,6 +104,10 @@ function Scene() {
         <GLBModel />
       </Suspense>
 
+      <group position={[-1.5, -2, -1.5]} scale={[1.5, 1.5, 1.5]}>
+        <IncenseStand position={[0, 0, 0]} />
+      </group>
+
       <group ref={plateRef} position={[0, -0.5, 2]} scale={[0.25, 0.25, 0.25]}>
         <AartiPlate />
         <FireParticles position={[0, 0.55, 0]} count={200} velocity={velocity} />
@@ -110,6 +117,8 @@ function Scene() {
         <planeGeometry args={[20, 20]} />
         <meshStandardMaterial color="#16213e" roughness={0.8} emissive="#0f3460" emissiveIntensity={0.2} />
       </mesh>
+
+      <TempleDust count={60} />
     </>
   )
 }
