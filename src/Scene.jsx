@@ -16,10 +16,9 @@ useGLTF.preload('/sample.glb')
 
 function Scene() {
   const { viewport, scene } = useThree()
-  const plateRef = useRef()
-  const targetPosition = useRef({ x: 0, y: -0.5 })
-  const lastPosition = useRef({ x: 0, y: -0.5 })
-  const velocity = useRef({ x: 0, y: 0 })
+  const cursorRef = useRef()
+  const cursorTarget = useRef({ x: 0, y: 0 })
+  const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const spotLightTarget = useMemo(() => {
     const target = new THREE.Object3D()
@@ -38,18 +37,18 @@ function Scene() {
   useFrame((state) => {
     const mouse = state.pointer
     
-    targetPosition.current.x = mouse.x * (viewport.width / 4)
-    targetPosition.current.y = mouse.y * (viewport.height / 4) - 0.5
+    cursorTarget.current.x = mouse.x * (viewport.width / 2.5)
+    cursorTarget.current.y = mouse.y * (viewport.height / 2.5) + 0.5
 
-    if (plateRef.current) {
-      const prevX = plateRef.current.position.x
-      const prevY = plateRef.current.position.y
+    if (cursorRef.current) {
+      const prevX = cursorRef.current.position.x
+      const prevY = cursorRef.current.position.y
       
-      plateRef.current.position.x += (targetPosition.current.x - plateRef.current.position.x) * 0.08
-      plateRef.current.position.y += (targetPosition.current.y - plateRef.current.position.y) * 0.08
+      cursorRef.current.position.x += (cursorTarget.current.x - cursorRef.current.position.x) * 0.12
+      cursorRef.current.position.y += (cursorTarget.current.y - cursorRef.current.position.y) * 0.12
       
-      velocity.current.x = plateRef.current.position.x - prevX
-      velocity.current.y = plateRef.current.position.y - prevY
+      cursorVelocity.current.x = cursorRef.current.position.x - prevX
+      cursorVelocity.current.y = cursorRef.current.position.y - prevY
     }
   })
 
@@ -108,17 +107,17 @@ function Scene() {
         <IncenseStand position={[0, 0, 0]} />
       </group>
 
-      <group ref={plateRef} position={[0, -0.5, 2]} scale={[0.25, 0.25, 0.25]}>
-        <AartiPlate />
-        <FireParticles position={[0, 0.55, 0]} count={200} velocity={velocity} />
-      </group>
-
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
         <planeGeometry args={[20, 20]} />
         <meshStandardMaterial color="#16213e" roughness={0.8} emissive="#0f3460" emissiveIntensity={0.2} />
       </mesh>
 
       <TempleDust count={60} />
+
+      <group ref={cursorRef} position={[0, 0.5, 3]} scale={[0.12, 0.12, 0.12]} rotation={[0, Math.PI, 0]}>
+        <AartiPlate />
+        <FireParticles position={[0, 0.55, 0.5]} count={80} velocity={cursorVelocity} />
+      </group>
     </>
   )
 }

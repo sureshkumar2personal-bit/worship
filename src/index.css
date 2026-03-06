@@ -13,4 +13,5 @@ html, body, #root {
 
 canvas {
   display: block;
+  cursor: none;
 }

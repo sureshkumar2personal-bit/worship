@@ -59,6 +59,39 @@ function AartiPlate() {
         />
       </mesh>
 
+      <mesh position={[0, 0.06, 0.5]}>
+        <cylinderGeometry args={[0.12, 0.1, 0.04, 16]} />
+        <meshStandardMaterial 
+          color="#C0C0C0" 
+          roughness={0.2} 
+          metalness={0.95} 
+        />
+      </mesh>
+
+      <mesh position={[0, 0.085, 0.5]}>
+        <cylinderGeometry args={[0.08, 0.06, 0.03, 16]} />
+        <meshStandardMaterial 
+          color="#FFFFF0" 
+          roughness={0.3} 
+          metalness={0.1}
+          emissive="#FFFFFF"
+          emissiveIntensity={0.2}
+        />
+      </mesh>
+
+      <mesh position={[0, 0.105, 0.5]}>
+        <sphereGeometry args={[0.05, 16, 16]} />
+        <meshStandardMaterial 
+          color="#FFFFFF" 
+          roughness={0.1} 
+          metalness={0.0}
+          emissive="#FFFFCC"
+          emissiveIntensity={0.5}
+          transparent
+          opacity={0.85}
+        />
+      </mesh>
+
       <mesh position={[0, 0.08, 0]}>
         <cylinderGeometry args={[0.28, 0.25, 0.15, 32]} />
         <meshStandardMaterial 
