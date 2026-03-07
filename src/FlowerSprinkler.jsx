@@ -170,7 +170,7 @@ function SprinklingHand({ isActive, onStatusChange }) {
   const handRef = useRef()
   const [isSprinkling, setIsSprinkling] = useState(false)
   const [flowers, setFlowers] = useState([])
-  const [handPos, setHandPos] = useState([0.5, 1.8, 0.5])
+  const [handPos, setHandPos] = useState([-1.5, 2, 1])
   const sprinkleIntervalRef = useRef(null)
 
   useEffect(() => {
@@ -179,9 +179,9 @@ function SprinklingHand({ isActive, onStatusChange }) {
       onStatusChange?.('🌸 Flowers falling...')
       
       gsap.to(handRef.current.position, {
-        x: 0.5,
-        y: 1.8,
-        z: 0.5,
+        x: -1.5,
+        y: 2,
+        z: 1,
         duration: 0.5,
         ease: "power2.out"
       })
@@ -191,9 +191,9 @@ function SprinklingHand({ isActive, onStatusChange }) {
         const newFlower = {
           id: Date.now() + index,
           position: [
-            0.5 + (Math.random() - 0.5) * 0.6,
-            1.8 + (Math.random() - 0.5) * 0.4,
-            0.5 + (Math.random() - 0.5) * 0.6
+            -1.5 + (Math.random() - 0.5) * 0.6,
+            2 + (Math.random() - 0.5) * 0.4,
+            1 + (Math.random() - 0.5) * 0.6
           ],
           type: isRose ? 'rose' : 'sunflower',
           delay: index * 0.15
@@ -216,7 +216,7 @@ function SprinklingHand({ isActive, onStatusChange }) {
       gsap.to(handRef.current.position, {
         x: 1.5,
         y: 0.5,
-        z: 1,
+        z: 1.5,
         duration: 0.5,
         ease: "power2.in"
       })
@@ -242,7 +242,7 @@ function SprinklingHand({ isActive, onStatusChange }) {
 
   return (
     <>
-      <group ref={handRef} position={[1.5, 0.5, 1]} rotation={[0, 0, 0]}>
+      <group ref={handRef} position={[1.5, 0.5, 1.5]} rotation={[0, 0, 0]}>
         <mesh position={[0, 0.15, 0]}>
           <cylinderGeometry args={[0.05, 0.06, 0.3, 8]} />
           <meshStandardMaterial color="#D4A574" roughness={0.7} />
