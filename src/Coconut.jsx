@@ -185,9 +185,13 @@ function Coconut({ position, isCracking, onCrackComplete }) {
               side={THREE.DoubleSide}
             />
           </mesh>
+          <mesh position={[0, 0.01, 0]}>
+            <cylinderGeometry args={[0.29, 0.29, 0.08, 32]} />
+            <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
+          </mesh>
           <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <circleGeometry args={[0.28, 32]} />
-            <meshStandardMaterial color="#F5F5DC" roughness={0.4} />
+            <meshStandardMaterial color="#FFFEF0" roughness={0.2} />
           </mesh>
         </group>
 
@@ -201,14 +205,18 @@ function Coconut({ position, isCracking, onCrackComplete }) {
               side={THREE.DoubleSide}
             />
           </mesh>
+          <mesh position={[0, -0.05, 0]}>
+            <cylinderGeometry args={[0.29, 0.29, 0.08, 32]} />
+            <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
+          </mesh>
           <mesh position={[0, -0.04, 0]} rotation={[Math.PI / 2, 0, 0]}>
             <circleGeometry args={[0.28, 32]} />
-            <meshStandardMaterial color="#F5F5DC" roughness={0.4} />
+            <meshStandardMaterial color="#FFFEF0" roughness={0.2} />
           </mesh>
         </group>
 
         <CoconutParticles active={true} />
-        <pointLight position={[0, 0, 0.4]} intensity={1} color="#FFF8DC" distance={1.5} decay={2} />
+        <pointLight position={[0, 0, 0.4]} intensity={2} color="#FFFAF0" distance={2} decay={2} />
       </group>
     )
   }
