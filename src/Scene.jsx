@@ -8,11 +8,11 @@ import IncenseStand from './IncenseStand'
 import TempleDust from './TempleDust'
 
 function GLBModel() {
-  const { scene } = useGLTF('/sample.glb')
-  return <primitive object={scene} position={[0, 0, -2]} scale={[3, 3, 3]} />
+  const { scene } = useGLTF('/murugan.glb')
+  return <primitive object={scene} position={[0, 0.5, -2]} scale={[4, 4, 4]} />
 }
 
-useGLTF.preload('/sample.glb')
+useGLTF.preload('/murugan.glb')
 
 function Scene() {
   const { viewport, scene } = useThree()
@@ -22,7 +22,7 @@ function Scene() {
   const spotLightRef = useRef()
   const spotLightTarget = useMemo(() => {
     const target = new THREE.Object3D()
-    target.position.set(0, 0, -2)
+    target.position.set(0, 0.5, -2)
     return target
   }, [])
 
