@@ -26,6 +26,7 @@ function Scene() {
   const spotLightRef = useRef()
   const [flowerActive, setFlowerActive] = useState(false)
   const [lampOn, setLampOn] = useState(false)
+  const [bellRinging, setBellRinging] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -34,6 +35,9 @@ function Scene() {
       }
       if (e.key === 'l' || e.key === 'L') {
         setLampOn(prev => !prev)
+      }
+      if (e.key === 'b' || e.key === 'B') {
+        setBellRinging(prev => !prev)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -127,7 +131,7 @@ function Scene() {
       </group>
 
       <group position={[1.8, -0.5, -1.5]}>
-        <TempleBell />
+        <TempleBell isRinging={bellRinging} />
       </group>
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
