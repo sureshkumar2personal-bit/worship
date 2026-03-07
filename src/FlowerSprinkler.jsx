@@ -170,7 +170,7 @@ function SprinklingHand({ isActive, onStatusChange }) {
   const handRef = useRef()
   const [isSprinkling, setIsSprinkling] = useState(false)
   const [flowers, setFlowers] = useState([])
-  const [handPos, setHandPos] = useState([-1.5, 2, 1])
+  const [handPos, setHandPos] = useState([0, 3.5, -2])
   const sprinkleIntervalRef = useRef(null)
 
   useEffect(() => {
@@ -179,9 +179,9 @@ function SprinklingHand({ isActive, onStatusChange }) {
       onStatusChange?.('🌸 Flowers falling...')
       
       gsap.to(handRef.current.position, {
-        x: -1.5,
-        y: 2,
-        z: 1,
+        x: 0,
+        y: 3.5,
+        z: -2,
         duration: 0.5,
         ease: "power2.out"
       })
@@ -191,9 +191,9 @@ function SprinklingHand({ isActive, onStatusChange }) {
         const newFlower = {
           id: Date.now() + index,
           position: [
-            -1.5 + (Math.random() - 0.5) * 0.6,
-            2 + (Math.random() - 0.5) * 0.4,
-            1 + (Math.random() - 0.5) * 0.6
+            0 + (Math.random() - 0.5) * 0.8,
+            3.5 + (Math.random() - 0.5) * 0.4,
+            -2 + (Math.random() - 0.5) * 0.8
           ],
           type: isRose ? 'rose' : 'sunflower',
           delay: index * 0.15
