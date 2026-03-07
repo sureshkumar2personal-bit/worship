@@ -9,6 +9,7 @@ import TempleBell from './TempleBell'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
+import Deepam from './Deepam'
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
@@ -24,11 +25,15 @@ function Scene() {
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const [flowerActive, setFlowerActive] = useState(false)
+  const [lampOn, setLampOn] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'f' || e.key === 'F') {
         setFlowerActive(prev => !prev)
+      }
+      if (e.key === 'l' || e.key === 'L') {
+        setLampOn(prev => !prev)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -142,6 +147,8 @@ function Scene() {
       <FlowerSprinkler 
         isActive={flowerActive}
       />
+
+      <Deepam isOn={lampOn} />
     </>
   )
 }
