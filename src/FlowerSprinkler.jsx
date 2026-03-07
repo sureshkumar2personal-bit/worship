@@ -166,8 +166,7 @@ function FlowerParticles({ active, handPosition }) {
   )
 }
 
-function SprinklingHand({ isActive }) {
-  const handRef = useRef()
+function FlowerSprinkler({ isActive }) {
   const [isSprinkling, setIsSprinkling] = useState(false)
   const [flowers, setFlowers] = useState([])
   const [handPos, setHandPos] = useState([0, 3.5, -2])
@@ -177,14 +176,6 @@ function SprinklingHand({ isActive }) {
     if (isActive && !isSprinkling) {
       setIsSprinkling(true)
       
-      gsap.to(handRef.current.position, {
-        x: 0,
-        y: 3.5,
-        z: -2,
-        duration: 0.5,
-        ease: "power2.out"
-      })
-
       const generateFlower = (index) => {
         const isRose = index % 2 === 0
         const newFlower = {
@@ -210,64 +201,17 @@ function SprinklingHand({ isActive }) {
       clearInterval(sprinkleIntervalRef.current)
       setIsSprinkling(false)
       setFlowers([])
-      
-      gsap.to(handRef.current.position, {
-        x: 1.5,
-        y: 0.5,
-        z: 1.5,
-        duration: 0.5,
-        ease: "power2.in"
-      })
     }
 
     return () => clearInterval(sprinkleIntervalRef.current)
   }, [isActive, isSprinkling])
 
   useFrame((state) => {
-    if (handRef.current) {
-      if (isSprinkling) {
-        handRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 5) * 0.12
-        handRef.current.rotation.x = -0.3 + Math.sin(state.clock.elapsedTime * 3) * 0.08
-      }
-      
-      setHandPos([
-        handRef.current.position.x,
-        handRef.current.position.y,
-        handRef.current.position.z
-      ])
-    }
+    setHandPos([0, 3.5, -2])
   })
 
   return (
     <>
-      <group ref={handRef} position={[1.5, 0.5, 1.5]} rotation={[0, 0, 0]}>
-        <mesh position={[0, 0.15, 0]}>
-          <cylinderGeometry args={[0.05, 0.06, 0.3, 8]} />
-          <meshStandardMaterial color="#D4A574" roughness={0.7} />
-        </mesh>
-        
-        <mesh position={[0, 0.35, 0]}>
-          <sphereGeometry args={[0.08, 12, 12]} />
-          <meshStandardMaterial color="#D4A574" roughness={0.7} />
-        </mesh>
-        
-        <mesh position={[0.06, 0.4, 0]} rotation={[0, 0, 0.4]}>
-          <cylinderGeometry args={[0.02, 0.025, 0.12, 6]} />
-          <meshStandardMaterial color="#D4A574" roughness={0.7} />
-        </mesh>
-        <mesh position={[-0.06, 0.4, 0]} rotation={[0, 0, -0.4]}>
-          <cylinderGeometry args={[0.02, 0.025, 0.12, 6]} />
-          <meshStandardMaterial color="#D4A574" roughness={0.7} />
-        </mesh>
-        
-        <mesh position={[0, 0.45, 0]}>
-          <cylinderGeometry args={[0.1, 0.08, 0.06, 12]} />
-          <meshStandardMaterial color="#8B4513" roughness={0.5} metalness={0.1} />
-        </mesh>
-        
-        <pointLight position={[0, 0.3, 0.1]} intensity={0.8} color="#FFAA00" distance={1.5} decay={2} />
-      </group>
-      
       {flowers.map((flower) => (
         flower.type === 'rose' ? (
           <RoseFlower
@@ -286,14 +230,6 @@ function SprinklingHand({ isActive }) {
       
       <FlowerParticles active={isSprinkling} handPosition={handPos} />
     </>
-  )
-}
-
-function FlowerSprinkler({ isActive }) {
-  return (
-    <SprinklingHand 
-      isActive={isActive} 
-    />
   )
 }
 

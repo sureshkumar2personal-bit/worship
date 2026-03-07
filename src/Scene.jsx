@@ -1,6 +1,6 @@
 import { useRef, Suspense, useMemo, useEffect, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, Html } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
@@ -142,27 +142,6 @@ function Scene() {
       <FlowerSprinkler 
         isActive={flowerActive}
       />
-
-      <Html position={[2.5, 2, 0]} center>
-        <button
-          onClick={() => setFlowerActive(!flowerActive)}
-          style={{
-            background: flowerActive ? '#ff4444' : '#44ff88',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '12px 20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#000',
-            cursor: 'pointer',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-            transition: 'all 0.3s ease',
-            fontFamily: 'Arial, sans-serif'
-          }}
-        >
-          {flowerActive ? 'Stop Flowers' : 'Sprinkle Flowers'}
-        </button>
-      </Html>
     </>
   )
 }
