@@ -7,6 +7,7 @@ import FireParticles from './FireParticles'
 import IncenseStand from './IncenseStand'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
+import FlowerSprinkler from './FlowerSprinkler'
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
@@ -22,6 +23,8 @@ function Scene() {
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const [coconutStatus, setCoconutStatus] = useState('Press Enter to crack coconut')
+  const [flowerStatus, setFlowerStatus] = useState('Press F to sprinkle flowers')
+  const [flowerActive, setFlowerActive] = useState(false)
   const spotLightTarget = useMemo(() => {
     const target = new THREE.Object3D()
     target.position.set(0, 0.5, -2)
@@ -123,6 +126,11 @@ function Scene() {
 
       <Coconut onStatusChange={setCoconutStatus} />
 
+      <FlowerSprinkler 
+        isActive={flowerActive}
+        onStatusChange={setFlowerStatus}
+      />
+
       <Html position={[0, 2, 0]} center>
         <div style={{
           color: '#ffcc88',
@@ -135,6 +143,27 @@ function Scene() {
         }}>
           {coconutStatus}
         </div>
+      </Html>
+
+      <Html position={[2.5, 2, 0]} center>
+        <button
+          onClick={() => setFlowerActive(!flowerActive)}
+          style={{
+            background: flowerActive ? '#ff4444' : '#44ff88',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px 20px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#000',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+            transition: 'all 0.3s ease',
+            fontFamily: 'Arial, sans-serif'
+          }}
+        >
+          {flowerActive ? 'Stop Flowers' : 'Sprinkle Flowers'}
+        </button>
       </Html>
     </>
   )
