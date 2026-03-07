@@ -7,66 +7,83 @@ function TempleBell({ isRinging }) {
   const bellRef = useRef()
   const clapperRef = useRef()
   const lightRef = useRef()
-  const ringCount = useRef(0)
+  const ringIntervalRef = useRef(null)
   
   useEffect(() => {
     if (isRinging && bellRef.current) {
       const ring = () => {
-        if (ringCount.current < 5) {
-          gsap.to(bellRef.current.rotation, {
-            z: 0.4,
-            duration: 0.15,
-            ease: "power2.out",
-            onComplete: () => {
-              gsap.to(bellRef.current.rotation, {
-                z: -0.4,
-                duration: 0.3,
-                ease: "bounce.out",
-                onComplete: () => {
-                  gsap.to(bellRef.current.rotation, {
-                    z: 0,
-                    duration: 0.2,
-                    ease: "elastic.out(1, 0.5)"
-                  })
-                }
-              })
-            }
-          })
-          
-          gsap.to(clapperRef.current.position, {
-            x: 0.08,
-            duration: 0.1,
-            ease: "power2.out",
-            onComplete: () => {
-              gsap.to(clapperRef.current.position, {
-                x: 0,
-                duration: 0.2,
-                ease: "elastic.out(1, 0.5)"
-              })
-            }
-          })
-          
-          if (lightRef.current) {
-            gsap.to(lightRef.current, {
-              intensity: 1.5,
-              duration: 0.1,
+        gsap.to(bellRef.current.rotation, {
+          z: 0.35,
+          duration: 0.12,
+          ease: "power2.out",
+          onComplete: () => {
+            gsap.to(bellRef.current.rotation, {
+              z: -0.35,
+              duration: 0.2,
+              ease: "power2.in",
               onComplete: () => {
-                gsap.to(lightRef.current, {
-                  intensity: 0.3,
-                  duration: 0.3
+                gsap.to(bellRef.current.rotation, {
+                  z: 0.2,
+                  duration: 0.15,
+                  ease: "power2.out",
+                  onComplete: () => {
+                    gsap.to(bellRef.current.rotation, {
+                      z: 0,
+                      duration: 0.3,
+                      ease: "elastic.out(1, 0.5)"
+                    })
+                  }
                 })
               }
             })
           }
-          
-          ringCount.current++
-          setTimeout(ring, 400)
-        } else {
-          ringCount.current = 0
+        })
+        
+        gsap.to(clapperRef.current.position, {
+          x: 0.06,
+          duration: 0.08,
+          ease: "power2.out",
+          onComplete: () => {
+            gsap.to(clapperRef.current.position, {
+              x: 0,
+              duration: 0.25,
+              ease: "elastic.out(1, 0.5)"
+            })
+          }
+        })
+        
+        if (lightRef.current) {
+          gsap.to(lightRef.current, {
+            intensity: 2,
+            duration: 0.05,
+            onComplete: () => {
+              gsap.to(lightRef.current, {
+                intensity: 0.3,
+                duration: 0.2
+              })
+            }
+          })
         }
       }
       
       ring()
+      ringIntervalRef.current = setInterval(ring, 400)
+    } else if (!isRinging && bellRef.current) {
+      if (ringIntervalRef.current) {
+        clearInterval(ringIntervalRef.current)
+        ringIntervalRef.current = null
+      }
+      gsap.to(bellRef.current.rotation, {
+        z: 0,
+        duration: 0.5,
+        ease: "elastic.out(1, 0.5)"
+      })
+    }
+    
+    return () => {
+      if (ringIntervalRef.current) {
+        clearInterval(ringIntervalRef.current)
+      }
     }
   }, [isRinging])
 
@@ -77,8 +94,8 @@ function TempleBell({ isRinging }) {
   })
 
   return (
-    <group ref={bellRef}>
-      <mesh position={[0, 0, 0]}>
+    <group ref={bellRef} position={[0, 1.9, 0]}>
+      <mesh>
         <coneGeometry args={[0.25, 0.5, 32]} />
         <meshStandardMaterial color="#D4AF37" roughness={0.3} metalness={0.8} />
       </mesh>
