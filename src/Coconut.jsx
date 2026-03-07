@@ -60,6 +60,65 @@ function CoconutParticles({ active }) {
   )
 }
 
+function CoconutWaterSpray({ active }) {
+  const particlesRef = useRef()
+  const particleCount = 60
+  const startTime = useRef(Date.now())
+  
+  const { positions, velocities } = useMemo(() => {
+    const pos = new Float32Array(particleCount * 3)
+    const vel = []
+    
+    for (let i = 0; i < particleCount; i++) {
+      const angle = Math.random() * Math.PI * 2
+      const spread = Math.random() * 0.5
+      
+      pos[i * 3] = Math.cos(angle) * spread * 0.3
+      pos[i * 3 + 1] = 0
+      pos[i * 3 + 2] = Math.sin(angle) * spread * 0.3
+      
+      vel.push({
+        x: Math.cos(angle) * (Math.random() * 0.08 + 0.04),
+        y: Math.random() * 0.1 + 0.05,
+        z: Math.sin(angle) * (Math.random() * 0.08 + 0.04)
+      })
+    }
+    
+    return { positions: pos, velocities: vel }
+  }, [])
+
+  useFrame(() => {
+    if (!active || !particlesRef.current) return
+    
+    const elapsed = (Date.now() - startTime.current) / 1000
+    const posArray = particlesRef.current.geometry.attributes.position.array
+    
+    for (let i = 0; i < particleCount; i++) {
+      const vel = velocities[i]
+      posArray[i * 3] += vel.x * 0.95
+      posArray[i * 3 + 1] += vel.y - elapsed * 0.015
+      posArray[i * 3 + 2] += vel.z * 0.95
+    }
+    particlesRef.current.geometry.attributes.position.needsUpdate = true
+  })
+
+  if (!active) return null
+
+  return (
+    <points ref={particlesRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={particleCount}
+          array={positions}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial size={0.04} color="#E8F4F8" transparent opacity={0.85} sizeAttenuation />
+    </points>
+  )
+}
+
 function Coconut({ position, isCracking, onCrackComplete }) {
   const groupRef = useRef()
   const topHalfRef = useRef()
@@ -216,6 +275,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
         </group>
 
         <CoconutParticles active={true} />
+        <CoconutWaterSpray active={true} />
         <pointLight position={[0, 0, 0.4]} intensity={2.5} color="#FFFAF0" distance={2} decay={2} />
       </group>
     )
