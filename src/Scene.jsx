@@ -1,6 +1,6 @@
 import { useRef, Suspense, useMemo, useEffect, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, Html } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
@@ -9,6 +9,7 @@ import TempleBell from './TempleBell'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
+import Deepam from './Deepam'
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
@@ -24,11 +25,15 @@ function Scene() {
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const [flowerActive, setFlowerActive] = useState(false)
+  const [lampOn, setLampOn] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'f' || e.key === 'F') {
         setFlowerActive(prev => !prev)
+      }
+      if (e.key === 'l' || e.key === 'L') {
+        setLampOn(prev => !prev)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -143,26 +148,7 @@ function Scene() {
         isActive={flowerActive}
       />
 
-      <Html position={[2.5, 2, 0]} center>
-        <button
-          onClick={() => setFlowerActive(!flowerActive)}
-          style={{
-            background: flowerActive ? '#ff4444' : '#44ff88',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '12px 20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#000',
-            cursor: 'pointer',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-            transition: 'all 0.3s ease',
-            fontFamily: 'Arial, sans-serif'
-          }}
-        >
-          {flowerActive ? 'Stop Flowers' : 'Sprinkle Flowers'}
-        </button>
-      </Html>
+      <Deepam isOn={lampOn} />
     </>
   )
 }
