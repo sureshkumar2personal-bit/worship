@@ -79,6 +79,16 @@ function Deepam({ position, isOn, side }) {
 
   return (
     <group ref={groupRef} position={position}>
+      <mesh position={[0, 0.6, 0]}>
+        <cylinderGeometry args={[0.015, 0.015, 0.5, 8]} />
+        <meshStandardMaterial color="#8B7355" roughness={0.8} metalness={0.3} />
+      </mesh>
+      
+      <mesh position={[0, 0.35, 0]}>
+        <torusGeometry args={[0.04, 0.015, 8, 16]} />
+        <meshStandardMaterial color="#8B7355" roughness={0.8} metalness={0.3} />
+      </mesh>
+      
       <mesh position={[0, 0, 0]}>
         <cylinderGeometry args={[0.25, 0.3, 0.08, 16]} />
         <meshStandardMaterial 
@@ -126,8 +136,8 @@ function Deepam({ position, isOn, side }) {
 function DeepamController({ isOn }) {
   return (
     <>
-      <Deepam position={[-2, -1.2, -1]} isOn={isOn} side="left" />
-      <Deepam position={[2, -1.2, -1]} isOn={isOn} side="right" />
+      <Deepam position={[-1.2, 2.2, -2]} isOn={isOn} side="left" />
+      <Deepam position={[1.2, 2.2, -2]} isOn={isOn} side="right" />
     </>
   )
 }
