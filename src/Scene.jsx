@@ -22,8 +22,6 @@ function Scene() {
   const cursorTarget = useRef({ x: 0, y: 0 })
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
-  const [coconutStatus, setCoconutStatus] = useState('Press Enter to crack coconut')
-  const [flowerStatus, setFlowerStatus] = useState('🌺 Sprinkle Flowers')
   const [flowerActive, setFlowerActive] = useState(false)
 
   useEffect(() => {
@@ -134,26 +132,11 @@ function Scene() {
         <FireParticles position={[0, 0.55, 0.5]} count={80} velocity={cursorVelocity} />
       </group>
 
-      <Coconut onStatusChange={setCoconutStatus} />
+      <Coconut />
 
       <FlowerSprinkler 
         isActive={flowerActive}
-        onStatusChange={setFlowerStatus}
       />
-
-      <Html position={[0, 2, 0]} center>
-        <div style={{
-          color: '#ffcc88',
-          fontFamily: 'Arial, sans-serif',
-          fontSize: '18px',
-          textAlign: 'center',
-          textShadow: '0 0 10px #ff6600',
-          pointerEvents: 'none',
-          userSelect: 'none'
-        }}>
-          {coconutStatus}
-        </div>
-      </Html>
 
       <Html position={[2.5, 2, 0]} center>
         <button

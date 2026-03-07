@@ -166,7 +166,7 @@ function FlowerParticles({ active, handPosition }) {
   )
 }
 
-function SprinklingHand({ isActive, onStatusChange }) {
+function SprinklingHand({ isActive }) {
   const handRef = useRef()
   const [isSprinkling, setIsSprinkling] = useState(false)
   const [flowers, setFlowers] = useState([])
@@ -176,7 +176,6 @@ function SprinklingHand({ isActive, onStatusChange }) {
   useEffect(() => {
     if (isActive && !isSprinkling) {
       setIsSprinkling(true)
-      onStatusChange?.('🌸 Flowers falling...')
       
       gsap.to(handRef.current.position, {
         x: 0,
@@ -211,7 +210,6 @@ function SprinklingHand({ isActive, onStatusChange }) {
       clearInterval(sprinkleIntervalRef.current)
       setIsSprinkling(false)
       setFlowers([])
-      onStatusChange?.('🌹🌻 Sprinkle Flowers')
       
       gsap.to(handRef.current.position, {
         x: 1.5,
@@ -223,7 +221,7 @@ function SprinklingHand({ isActive, onStatusChange }) {
     }
 
     return () => clearInterval(sprinkleIntervalRef.current)
-  }, [isActive, isSprinkling, onStatusChange])
+  }, [isActive, isSprinkling])
 
   useFrame((state) => {
     if (handRef.current) {
@@ -291,11 +289,10 @@ function SprinklingHand({ isActive, onStatusChange }) {
   )
 }
 
-function FlowerSprinkler({ isActive, onStatusChange }) {
+function FlowerSprinkler({ isActive }) {
   return (
     <SprinklingHand 
       isActive={isActive} 
-      onStatusChange={onStatusChange}
     />
   )
 }

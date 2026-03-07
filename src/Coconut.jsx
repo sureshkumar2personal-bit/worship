@@ -247,7 +247,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
   )
 }
 
-function CoconutController({ onStatusChange }) {
+function CoconutController() {
   const [isCracking, setIsCracking] = useState(false)
   const [coconutVisible, setCoconutVisible] = useState(true)
   const [key, setKey] = useState(0)
@@ -259,24 +259,18 @@ function CoconutController({ onStatusChange }) {
           setCoconutVisible(true)
           setIsCracking(false)
           setKey(k => k + 1)
-          onStatusChange?.('Press Enter to crack coconut')
         } else {
-          setIsCracking(prev => {
-            const newState = !prev
-            onStatusChange?.(newState ? 'Cracking coconut...' : 'Press Enter to crack coconut')
-            return newState
-          })
+          setIsCracking(prev => !prev)
         }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [coconutVisible, onStatusChange])
+  }, [coconutVisible])
 
   const handleCrackComplete = () => {
     setTimeout(() => {
-      onStatusChange?.('Coconut cracked! Press Enter for new coconut')
     }, 300)
   }
 
