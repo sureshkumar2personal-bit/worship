@@ -3,9 +3,42 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
 
-function FlowerParticles({ active, position }) {
+function Flower({ position, targetPosition, delay, color }) {
+  const meshRef = useRef()
+  const startPos = useMemo(() => [...position], [position])
+  
+  useEffect(() => {
+    if (meshRef.current) {
+      gsap.to(meshRef.current.position, {
+        x: targetPosition[0] + (Math.random() - 0.5) * 0.5,
+        y: targetPosition[1] - 1.5,
+        z: targetPosition[2] + (Math.random() - 0.5) * 0.5,
+        duration: 1.2 + Math.random() * 0.5,
+        delay: delay,
+        ease: "power2.in"
+      })
+      gsap.to(meshRef.current.rotation, {
+        x: Math.random() * Math.PI * 4,
+        y: Math.random() * Math.PI * 4,
+        z: Math.random() * Math.PI * 4,
+        duration: 1.5,
+        delay: delay,
+        ease: "none"
+      })
+    }
+  }, [delay, targetPosition])
+
+  return (
+    <mesh ref={meshRef} position={position}>
+      <sphereGeometry args={[0.03, 6, 6]} />
+      <meshStandardMaterial color={color} roughness={0.6} emissive={color} emissiveIntensity={0.2} />
+    </mesh>
+  )
+}
+
+function FlowerParticles({ active, handPosition }) {
   const particlesRef = useRef()
-  const particleCount = 25
+  const particleCount = 30
   
   const { positions, velocities, colors } = useMemo(() => {
     const pos = new Float32Array(particleCount * 3)
@@ -13,11 +46,11 @@ function FlowerParticles({ active, position }) {
     const cols = new Float32Array(particleCount * 3)
     
     const flowerColors = [
+      [1, 0.3, 0.3],
       [1, 0.8, 0.2],
-      [1, 0.4, 0.6],
-      [1, 0.9, 0.9],
-      [1, 1, 0.5],
-      [0.9, 0.5, 0.8]
+      [1, 0.5, 0.8],
+      [1, 1, 0.3],
+      [0.8, 0.4, 1]
     ]
     
     for (let i = 0; i < particleCount; i++) {
@@ -25,13 +58,10 @@ function FlowerParticles({ active, position }) {
       pos[i * 3 + 1] = 0
       pos[i * 3 + 2] = 0
       
-      const angle = Math.random() * Math.PI * 2
-      const speed = Math.random() * 0.03 + 0.02
-      
       vel.push({
-        x: Math.cos(angle) * speed,
-        y: -Math.random() * 0.04 - 0.02,
-        z: Math.sin(angle) * speed
+        x: (Math.random() - 0.5) * 0.05,
+        y: -0.03 - Math.random() * 0.02,
+        z: (Math.random() - 0.5) * 0.05
       })
       
       const color = flowerColors[Math.floor(Math.random() * flowerColors.length)]
@@ -57,10 +87,10 @@ function FlowerParticles({ active, position }) {
     particlesRef.current.geometry.attributes.position.needsUpdate = true
   })
 
-  if (!active) return null
+  if (!active || !handPosition) return null
 
   return (
-    <points ref={particlesRef} position={position}>
+    <points ref={particlesRef} position={[handPosition[0], handPosition[1] - 0.3, handPosition[2]]}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
@@ -75,87 +105,56 @@ function FlowerParticles({ active, position }) {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.08} vertexColors transparent opacity={0.9} sizeAttenuation />
+      <pointsMaterial size={0.06} vertexColors transparent opacity={0.95} sizeAttenuation />
     </points>
-  )
-}
-
-function Flower({ position, rotation, delay }) {
-  const meshRef = useRef()
-  const initialY = position[1]
-  
-  useEffect(() => {
-    if (meshRef.current) {
-      gsap.to(meshRef.current.position, {
-        y: initialY - 2,
-        duration: 1.5 + Math.random() * 0.5,
-        delay: delay,
-        ease: "power2.in"
-      })
-      gsap.to(meshRef.current.rotation, {
-        x: Math.random() * Math.PI * 2,
-        y: Math.random() * Math.PI * 2,
-        z: Math.random() * Math.PI * 2,
-        duration: 1.5,
-        delay: delay,
-        ease: "power1.inOut"
-      })
-    }
-  }, [delay, initialY])
-
-  return (
-    <mesh ref={meshRef} position={position} rotation={rotation}>
-      <sphereGeometry args={[0.04, 8, 8]} />
-      <meshStandardMaterial color="#FFD700" roughness={0.8} />
-    </mesh>
   )
 }
 
 function SprinklingHand({ isActive, onStatusChange }) {
   const handRef = useRef()
-  const armRef = useRef()
-  const flowerBowlRef = useRef()
+  const bowlRef = useRef()
   const [isSprinkling, setIsSprinkling] = useState(false)
   const [flowers, setFlowers] = useState([])
-  const flowerCount = 50
+  const [handPos, setHandPos] = useState([1.2, 0.8, 0])
+  const flowerCount = 40
   const sprinkleIntervalRef = useRef(null)
+  
+  const flowerColors = ['#FF6B6B', '#FFE66D', '#C44DFF', '#FF9F43', '#EE5A24']
 
   useEffect(() => {
     if (isActive && !isSprinkling) {
       setIsSprinkling(true)
-      onStatusChange?.('Flower sprinkling active')
+      onStatusChange?.('🌸 Sprinkling flowers...')
       
       gsap.to(handRef.current.position, {
-        x: 0.8,
-        y: 1.5,
-        z: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      })
-      gsap.to(handRef.current.rotation, {
-        x: -Math.PI / 4,
-        y: 0,
-        z: Math.PI / 6,
-        duration: 0.8,
-        ease: "power2.out"
+        x: 0.5,
+        y: 1.8,
+        z: 0.5,
+        duration: 0.6,
+        ease: "power2.out",
+        onUpdate: () => {
+          if (handRef.current) {
+            setHandPos([
+              handRef.current.position.x,
+              handRef.current.position.y,
+              handRef.current.position.z
+            ])
+          }
+        }
       })
 
       const generateFlower = (index) => {
         const newFlower = {
           id: Date.now() + index,
           position: [
-            0.8 + (Math.random() - 0.5) * 0.2,
-            1.3 + (Math.random() - 0.5) * 0.2,
-            (Math.random() - 0.5) * 0.3
+            0.5 + (Math.random() - 0.5) * 0.3,
+            1.8 + (Math.random() - 0.5) * 0.2,
+            0.5 + (Math.random() - 0.5) * 0.3
           ],
-          rotation: [
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI
-          ],
-          delay: index * 0.15
+          color: flowerColors[Math.floor(Math.random() * flowerColors.length)],
+          delay: index * 0.08
         }
-        setFlowers(prev => [...prev.slice(-30), newFlower])
+        setFlowers(prev => [...prev.slice(-50), newFlower])
       }
 
       let count = 0
@@ -168,29 +167,22 @@ function SprinklingHand({ isActive, onStatusChange }) {
           setTimeout(() => {
             setIsSprinkling(false)
             setFlowers([])
-            onStatusChange?.('Click to sprinkle flowers')
-          }, 2000)
+            onStatusChange?.('🌺 Sprinkle Flowers')
+          }, 2500)
         }
-      }, 150)
+      }, 100)
 
     } else if (!isActive && isSprinkling) {
       clearInterval(sprinkleIntervalRef.current)
       setIsSprinkling(false)
       setFlowers([])
-      onStatusChange?.('Click to sprinkle flowers')
+      onStatusChange?.('🌺 Sprinkle Flowers')
       
       gsap.to(handRef.current.position, {
-        x: 2,
-        y: -1,
-        z: 1,
-        duration: 0.6,
-        ease: "power2.in"
-      })
-      gsap.to(handRef.current.rotation, {
-        x: 0,
-        y: 0,
+        x: 1.2,
+        y: 0.8,
         z: 0,
-        duration: 0.6,
+        duration: 0.5,
         ease: "power2.in"
       })
     }
@@ -200,76 +192,63 @@ function SprinklingHand({ isActive, onStatusChange }) {
 
   useFrame((state) => {
     if (handRef.current && isSprinkling) {
-      handRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 8) * 0.1
+      handRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 6) * 0.15
+      handRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 4) * 0.1 - 0.3
+      
+      setHandPos([
+        handRef.current.position.x,
+        handRef.current.position.y,
+        handRef.current.position.z
+      ])
     }
   })
 
   return (
     <>
-      <group ref={handRef} position={[2, -1, 1]} rotation={[0, 0, 0]}>
-        <group ref={armRef}>
-          <mesh position={[0, 0.25, 0]}>
-            <cylinderGeometry args={[0.06, 0.08, 0.5, 8]} />
-            <meshStandardMaterial color="#D4A574" roughness={0.7} />
-          </mesh>
-          
-          <mesh position={[0, 0.55, 0]}>
-            <sphereGeometry args={[0.1, 16, 16]} />
-            <meshStandardMaterial color="#D4A574" roughness={0.7} />
-          </mesh>
-          
-          <mesh position={[0.08, 0.6, 0]} rotation={[0, 0, 0.3]}>
-            <cylinderGeometry args={[0.025, 0.03, 0.15, 8]} />
-            <meshStandardMaterial color="#D4A574" roughness={0.7} />
-          </mesh>
-          <mesh position={[-0.08, 0.6, 0]} rotation={[0, 0, -0.3]}>
-            <cylinderGeometry args={[0.025, 0.03, 0.15, 8]} />
-            <meshStandardMaterial color="#D4A574" roughness={0.7} />
-          </mesh>
-          
-          <mesh ref={flowerBowlRef} position={[0, 0.65, 0]}>
-            <cylinderGeometry args={[0.12, 0.1, 0.08, 16]} />
-            <meshStandardMaterial color="#8B4513" roughness={0.6} />
-          </mesh>
-          
-          {flowers.map((flower) => (
-            <Flower
-              key={flower.id}
-              position={flower.position}
-              rotation={flower.rotation}
-              delay={flower.delay}
-            />
-          ))}
-        </group>
+      <group ref={handRef} position={[1.2, 0.8, 0]} rotation={[0, 0, 0]}>
+        <mesh position={[0, 0.15, 0]}>
+          <cylinderGeometry args={[0.05, 0.06, 0.3, 8]} />
+          <meshStandardMaterial color="#D4A574" roughness={0.7} />
+        </mesh>
+        
+        <mesh position={[0, 0.35, 0]}>
+          <sphereGeometry args={[0.08, 12, 12]} />
+          <meshStandardMaterial color="#D4A574" roughness={0.7} />
+        </mesh>
+        
+        <mesh position={[0.06, 0.4, 0]} rotation={[0, 0, 0.4]}>
+          <cylinderGeometry args={[0.02, 0.025, 0.12, 6]} />
+          <meshStandardMaterial color="#D4A574" roughness={0.7} />
+        </mesh>
+        <mesh position={[-0.06, 0.4, 0]} rotation={[0, 0, -0.4]}>
+          <cylinderGeometry args={[0.02, 0.025, 0.12, 6]} />
+          <meshStandardMaterial color="#D4A574" roughness={0.7} />
+        </mesh>
+        
+        <mesh ref={bowlRef} position={[0, 0.45, 0]}>
+          <cylinderGeometry args={[0.1, 0.08, 0.06, 12]} />
+          <meshStandardMaterial color="#8B4513" roughness={0.5} metalness={0.1} />
+        </mesh>
+        
+        <pointLight position={[0, 0.3, 0.1]} intensity={0.5} color="#FFAA00" distance={1} decay={2} />
       </group>
       
-      {isSprinkling && (
-        <FlowerParticles 
-          active={isSprinkling} 
-          position={[0.8, 1.3, 0]} 
+      {flowers.map((flower) => (
+        <Flower
+          key={flower.id}
+          position={flower.position}
+          targetPosition={[0, 0.5, -2]}
+          delay={flower.delay}
+          color={flower.color}
         />
-      )}
+      ))}
+      
+      <FlowerParticles active={isSprinkling} handPosition={handPos} />
     </>
   )
 }
 
-function FlowerSprinkler({ onStatusChange }) {
-  const [isActive, setIsActive] = useState(false)
-
-  useEffect(() => {
-    const handleToggle = () => {
-      setIsActive(prev => !prev)
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'f' || e.key === 'F') {
-        handleToggle()
-      }
-    })
-
-    return () => window.removeEventListener('keydown', handleToggle)
-  }, [])
-
+function FlowerSprinkler({ isActive, onStatusChange }) {
   return (
     <SprinklingHand 
       isActive={isActive} 

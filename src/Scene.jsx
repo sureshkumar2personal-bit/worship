@@ -23,8 +23,18 @@ function Scene() {
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const [coconutStatus, setCoconutStatus] = useState('Press Enter to crack coconut')
-  const [flowerStatus, setFlowerStatus] = useState('Press F to sprinkle flowers')
+  const [flowerStatus, setFlowerStatus] = useState('🌺 Sprinkle Flowers')
   const [flowerActive, setFlowerActive] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'f' || e.key === 'F') {
+        setFlowerActive(prev => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
   const spotLightTarget = useMemo(() => {
     const target = new THREE.Object3D()
     target.position.set(0, 0.5, -2)
