@@ -5,7 +5,7 @@ import gsap from 'gsap'
 
 function CoconutParticles({ active }) {
   const particlesRef = useRef()
-  const particleCount = 40
+  const particleCount = 30
   
   const { positions, velocities } = useMemo(() => {
     const pos = new Float32Array(particleCount * 3)
@@ -13,16 +13,16 @@ function CoconutParticles({ active }) {
     
     for (let i = 0; i < particleCount; i++) {
       const angle = Math.random() * Math.PI * 2
-      const radius = Math.random() * 0.6 + 0.2
+      const radius = Math.random() * 0.4 + 0.1
       
-      pos[i * 3] = Math.cos(angle) * radius * 0.3
+      pos[i * 3] = Math.cos(angle) * radius
       pos[i * 3 + 1] = (Math.random() - 0.5) * 0.2
-      pos[i * 3 + 2] = Math.sin(angle) * radius * 0.3
+      pos[i * 3 + 2] = Math.sin(angle) * radius
       
       vel.push({
-        x: Math.cos(angle) * (Math.random() * 0.06 + 0.03),
-        y: Math.random() * 0.05 + 0.02,
-        z: Math.sin(angle) * (Math.random() * 0.06 + 0.03)
+        x: Math.cos(angle) * (Math.random() * 0.04 + 0.02),
+        y: Math.random() * 0.03 + 0.01,
+        z: Math.sin(angle) * (Math.random() * 0.04 + 0.02)
       })
     }
     
@@ -37,7 +37,7 @@ function CoconutParticles({ active }) {
     for (let i = 0; i < particleCount; i++) {
       const vel = velocities[i]
       posArray[i * 3] += vel.x
-      posArray[i * 3 + 1] += vel.y - 0.004
+      posArray[i * 3 + 1] += vel.y - 0.003
       posArray[i * 3 + 2] += vel.z
     }
     particlesRef.current.geometry.attributes.position.needsUpdate = true
@@ -55,7 +55,7 @@ function CoconutParticles({ active }) {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.025} color="#6B4423" transparent opacity={0.85} sizeAttenuation />
+      <pointsMaterial size={0.02} color="#4A3020" transparent opacity={0.9} sizeAttenuation />
     </points>
   )
 }
@@ -64,9 +64,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
   const groupRef = useRef()
   const topHalfRef = useRef()
   const bottomHalfRef = useRef()
-  const handRef = useRef()
   const [isCracked, setIsCracked] = useState(false)
-  const [showHand, setShowHand] = useState(true)
   const [scattered, setScattered] = useState(false)
 
   useEffect(() => {
@@ -79,45 +77,45 @@ function Coconut({ position, isCracking, onCrackComplete }) {
       })
 
       tl.to(groupRef.current.position, {
-        y: position[1] + 0.8,
-        duration: 0.35,
+        y: position[1] + 1.2,
+        duration: 0.4,
         ease: "power2.in"
       })
       .to(groupRef.current.rotation, {
-        x: -0.3,
-        z: 0.1,
-        duration: 0.35,
+        x: -0.5,
+        z: 0.2,
+        duration: 0.4,
         ease: "power2.in"
       }, 0)
       .to(groupRef.current.position, {
-        y: position[1] - 0.3,
-        duration: 0.12,
+        y: position[1] - 0.5,
+        duration: 0.15,
         ease: "power3.in"
       })
       .to(groupRef.current.rotation, {
-        x: 0.5,
-        z: -0.3,
-        duration: 0.12,
+        x: 0.8,
+        z: -0.4,
+        duration: 0.15,
         ease: "power3.in"
       }, "<")
       .to(groupRef.current.scale, {
-        x: 1.15,
-        y: 0.85,
-        z: 1.15,
-        duration: 0.08,
-        ease: "power2.in",
+        x: 1.1,
+        y: 0.9,
+        z: 1.1,
+        duration: 0.06,
+        ease: "power1.inOut",
         yoyo: true,
-        repeat: 4
+        repeat: 6
       })
       .to(groupRef.current.position, {
         y: position[1],
-        duration: 0.25,
+        duration: 0.3,
         ease: "bounce.out"
       })
       .to(groupRef.current.rotation, {
         x: 0,
         z: 0,
-        duration: 0.3,
+        duration: 0.4,
         ease: "elastic.out(1, 0.5)"
       }, "<")
 
@@ -128,42 +126,37 @@ function Coconut({ position, isCracking, onCrackComplete }) {
   useEffect(() => {
     if (isCracked && !scattered) {
       setScattered(true)
-      setShowHand(false)
-
-      const topAngle = -Math.PI / 4
-      const topRadius = 0.7
-
-      const bottomAngle = Math.PI / 3
-      const bottomRadius = 0.6
 
       if (topHalfRef.current) {
         gsap.to(topHalfRef.current.position, {
-          x: Math.cos(topAngle) * topRadius,
-          y: -0.2,
-          z: Math.sin(topAngle) * topRadius * 0.4,
-          duration: 0.5,
+          x: -0.6,
+          y: -0.3,
+          z: -0.3,
+          duration: 0.4,
           ease: "power2.out"
         })
         gsap.to(topHalfRef.current.rotation, {
-          x: Math.PI * 0.35,
-          y: topAngle,
-          duration: 0.5,
+          x: Math.PI * 0.4,
+          y: -Math.PI * 0.3,
+          z: Math.PI * 0.2,
+          duration: 0.4,
           ease: "power2.out"
         })
       }
 
       if (bottomHalfRef.current) {
         gsap.to(bottomHalfRef.current.position, {
-          x: Math.cos(bottomAngle) * bottomRadius,
-          y: -0.5,
-          z: Math.sin(bottomAngle) * bottomRadius * 0.4,
-          duration: 0.5,
+          x: 0.5,
+          y: -0.6,
+          z: 0.4,
+          duration: 0.4,
           ease: "power2.out"
         })
         gsap.to(bottomHalfRef.current.rotation, {
           x: -Math.PI * 0.3,
-          y: bottomAngle,
-          duration: 0.5,
+          y: Math.PI * 0.4,
+          z: -Math.PI * 0.2,
+          duration: 0.4,
           ease: "power2.out"
         })
       }
@@ -172,64 +165,58 @@ function Coconut({ position, isCracking, onCrackComplete }) {
 
   useFrame((state) => {
     if (groupRef.current && !isCracking && !isCracked) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.6) * 0.08
-      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 1) * 0.03
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.06
+      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8) * 0.02
     }
   })
 
-  const coconutColor = "#4A3020"
+  const coconutColor = "#3D2817"
 
   if (isCracked) {
     return (
       <group position={position}>
-        <group ref={topHalfRef} position={[0, 0.15, 0]} rotation={[0.4, 0, 0]}>
+        <group ref={topHalfRef} position={[0, 0.12, 0]} rotation={[0.35, 0, 0]}>
           <mesh>
-            <sphereGeometry args={[0.35, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <sphereGeometry args={[0.32, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
             <meshStandardMaterial 
               color={coconutColor} 
-              roughness={0.88}
-              metalness={0.02}
+              roughness={0.9}
+              metalness={0.01}
               side={THREE.DoubleSide}
             />
           </mesh>
+          <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[0.28, 32]} />
+            <meshStandardMaterial color="#F5F5DC" roughness={0.4} />
+          </mesh>
         </group>
 
-        <group ref={bottomHalfRef} position={[0, -0.15, 0]} rotation={[-0.35, 0, 0]}>
+        <group ref={bottomHalfRef} position={[0, -0.12, 0]} rotation={[-0.3, 0, 0]}>
           <mesh>
-            <sphereGeometry args={[0.35, 32, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
+            <sphereGeometry args={[0.32, 32, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
             <meshStandardMaterial 
               color={coconutColor} 
-              roughness={0.88}
-              metalness={0.02}
+              roughness={0.9}
+              metalness={0.01}
               side={THREE.DoubleSide}
             />
+          </mesh>
+          <mesh position={[0, -0.04, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[0.28, 32]} />
+            <meshStandardMaterial color="#F5F5DC" roughness={0.4} />
           </mesh>
         </group>
 
         <CoconutParticles active={true} />
-
-        <pointLight position={[0, 0, 0.6]} intensity={1.5} color="#FFFAF0" distance={2} decay={2} />
+        <pointLight position={[0, 0, 0.4]} intensity={1} color="#FFF8DC" distance={1.5} decay={2} />
       </group>
     )
   }
 
   return (
     <group ref={groupRef} position={position}>
-      {showHand && (
-        <group ref={handRef} position={[0.5, -0.4, 0]} rotation={[0, 0, -0.3]}>
-          <mesh>
-            <boxGeometry args={[0.18, 0.4, 0.12]} />
-            <meshStandardMaterial color="#D4A574" roughness={0.7} />
-          </mesh>
-          <mesh position={[0.12, 0.15, 0]} rotation={[0, 0, 0.3]}>
-            <boxGeometry args={[0.08, 0.25, 0.1]} />
-            <meshStandardMaterial color="#D4A574" roughness={0.7} />
-          </mesh>
-        </group>
-      )}
-
       <mesh>
-        <sphereGeometry args={[0.35, 32, 32]} />
+        <sphereGeometry args={[0.32, 32, 32]} />
         <meshStandardMaterial 
           color={coconutColor} 
           roughness={0.92}
@@ -237,10 +224,25 @@ function Coconut({ position, isCracking, onCrackComplete }) {
         />
       </mesh>
 
-      <mesh position={[0, 0.33, 0]}>
-        <cylinderGeometry args={[0.1, 0.14, 0.14, 16]} />
+      <mesh position={[0, 0.3, 0]}>
+        <cylinderGeometry args={[0.08, 0.12, 0.1, 12]} />
         <meshStandardMaterial color="#2D1F14" roughness={0.95} />
       </mesh>
+
+      {[...Array(6)].map((_, i) => (
+        <mesh
+          key={i}
+          position={[
+            Math.sin(i * 1.05) * 0.28,
+            (Math.random() - 0.5) * 0.35,
+            Math.cos(i * 1.05) * 0.28
+          ]}
+          rotation={[Math.random() * 0.4, Math.random() * Math.PI, Math.random() * 0.4]}
+        >
+          <planeGeometry args={[0.12, 0.006]} />
+          <meshStandardMaterial color="#1a0f0a" transparent opacity={0.5} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
 
       <CoconutParticles active={isCracking} />
     </group>
