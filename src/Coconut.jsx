@@ -188,16 +188,16 @@ function Coconut({ position, isCracking, onCrackComplete }) {
 
       if (topHalfRef.current) {
         gsap.to(topHalfRef.current.position, {
-          x: -0.6,
-          y: -0.3,
-          z: -0.3,
+          x: -0.5,
+          y: -0.15,
+          z: -0.2,
           duration: 0.4,
           ease: "power2.out"
         })
         gsap.to(topHalfRef.current.rotation, {
-          x: Math.PI * 0.4,
-          y: -Math.PI * 0.3,
-          z: Math.PI * 0.2,
+          x: -Math.PI * 0.15,
+          y: -Math.PI * 0.25,
+          z: Math.PI * 0.1,
           duration: 0.4,
           ease: "power2.out"
         })
@@ -205,16 +205,16 @@ function Coconut({ position, isCracking, onCrackComplete }) {
 
       if (bottomHalfRef.current) {
         gsap.to(bottomHalfRef.current.position, {
-          x: 0.5,
-          y: -0.6,
-          z: 0.4,
+          x: 0.4,
+          y: -0.4,
+          z: 0.3,
           duration: 0.4,
           ease: "power2.out"
         })
         gsap.to(bottomHalfRef.current.rotation, {
-          x: -Math.PI * 0.3,
-          y: Math.PI * 0.4,
-          z: -Math.PI * 0.2,
+          x: Math.PI * 0.2,
+          y: Math.PI * 0.35,
+          z: -Math.PI * 0.15,
           duration: 0.4,
           ease: "power2.out"
         })
@@ -234,7 +234,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
   if (isCracked) {
     return (
       <group position={position}>
-        <group ref={topHalfRef} position={[0, 0.12, 0]} rotation={[0.35, 0, 0]}>
+        <group ref={topHalfRef} position={[0, 0.12, 0]} rotation={[-0.2, 0, 0]}>
           <mesh>
             <sphereGeometry args={[0.34, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
             <meshStandardMaterial 
@@ -254,7 +254,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
           </mesh>
         </group>
 
-        <group ref={bottomHalfRef} position={[0, -0.12, 0]} rotation={[-0.3, 0, 0]}>
+        <group ref={bottomHalfRef} position={[0, -0.12, 0]} rotation={[0.15, 0, 0]}>
           <mesh>
             <sphereGeometry args={[0.34, 32, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
             <meshStandardMaterial 
