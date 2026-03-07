@@ -1,11 +1,12 @@
-import { useRef, Suspense, useMemo, useEffect } from 'react'
+import { useRef, Suspense, useMemo, useEffect, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
 import IncenseStand from './IncenseStand'
 import TempleDust from './TempleDust'
+import Coconut from './Coconut'
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
@@ -20,6 +21,7 @@ function Scene() {
   const cursorTarget = useRef({ x: 0, y: 0 })
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
+  const [coconutStatus, setCoconutStatus] = useState('Press Enter to crack coconut')
   const spotLightTarget = useMemo(() => {
     const target = new THREE.Object3D()
     target.position.set(0, 0.5, -2)
@@ -118,6 +120,22 @@ function Scene() {
         <AartiPlate />
         <FireParticles position={[0, 0.55, 0.5]} count={80} velocity={cursorVelocity} />
       </group>
+
+      <Coconut onStatusChange={setCoconutStatus} />
+
+      <Html position={[0, 2, 0]} center>
+        <div style={{
+          color: '#ffcc88',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '18px',
+          textAlign: 'center',
+          textShadow: '0 0 10px #ff6600',
+          pointerEvents: 'none',
+          userSelect: 'none'
+        }}>
+          {coconutStatus}
+        </div>
+      </Html>
     </>
   )
 }
