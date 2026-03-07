@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
 import IncenseStand from './IncenseStand'
+import TempleBell from './TempleBell'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
@@ -118,6 +119,10 @@ function Scene() {
 
       <group position={[-1.5, -2, -1.5]} scale={[1.5, 1.5, 1.5]}>
         <IncenseStand position={[0, 0, 0]} />
+      </group>
+
+      <group position={[1.8, -0.5, -1.5]}>
+        <TempleBell />
       </group>
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
