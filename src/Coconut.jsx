@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Image } from '@react-three/drei'
 import * as THREE from 'three'
-import gsap from 'gsap'
+import gsap from './gsapLite'
 
 function CoconutParticles({ active }) {
   const particlesRef = useRef()
