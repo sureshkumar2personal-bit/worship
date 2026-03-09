@@ -9,6 +9,7 @@ import TempleBell from './TempleBell'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
+import Flower from './Flower'
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
@@ -119,6 +120,10 @@ function Scene() {
 
       <group position={[-1.5, -2, -1.5]} scale={[1.5, 1.5, 1.5]}>
         <IncenseStand position={[0, 0, 0]} />
+      </group>
+
+      <group position={[1.5, -2.5, -2]} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
+        <Flower />
       </group>
 
       <group position={[1.8, -0.5, -1.5]}>
