@@ -132,11 +132,7 @@ function Scene() {
         <IncenseStand position={[0, 0, 0]} />
       </group>
 
-      <group position={[1.5, -1.5, -2]} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
-        <Flower />
-      </group>
-
-      <group position={[0.8, -1.5, -1.3]} rotation={[0, -0.3, 0]} scale={[0.7, 0.7, 0.7]}>
+      <group position={[-1.2, -1.6, -0.8]} rotation={[0, -0.3, 0]} scale={[1, 1, 1]}>
         <Flower />
       </group>
 
