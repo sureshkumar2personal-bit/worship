@@ -136,6 +136,10 @@ function Scene() {
         <Flower />
       </group>
 
+      <group position={[-0.5, -1.5, -1.5]} rotation={[0, 0.3, 0]} scale={[0.5, 0.5, 0.5]}>
+        <Flower />
+      </group>
+
       <group position={[1.8, -0.5, -1.5]}>
         <TempleBell isRinging={bellRinging} />
       </group>
