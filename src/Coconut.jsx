@@ -349,7 +349,7 @@ function CoconutController() {
 
   return (
     <Image
-      url="/coco.jpg"
+      url="/coco.avif"
       position={[1.5, -0.5, -0.5]}
       scale={[1.2, 1.6, 1]}
     />
