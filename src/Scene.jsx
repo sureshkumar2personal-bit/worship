@@ -136,7 +136,7 @@ function Scene() {
         <Flower />
       </group>
 
-      <group position={[-0.5, -1.5, -1.5]} rotation={[0, 0.3, 0]} scale={[0.5, 0.5, 0.5]}>
+      <group position={[0.8, -1.5, -1.3]} rotation={[0, -0.3, 0]} scale={[0.7, 0.7, 0.7]}>
         <Flower />
       </group>
 
