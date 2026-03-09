@@ -9,11 +9,8 @@ import TempleBell from './TempleBell'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
-<<<<<<< HEAD
 import Flower from './Flower'
-=======
 import Deepam from './Deepam'
->>>>>>> origin/main
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
