@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { Image } from '@react-three/drei'
 import * as THREE from 'three'
 import gsap from 'gsap'
 
@@ -347,11 +348,10 @@ function CoconutController() {
   if (!coconutVisible) return null
 
   return (
-    <Coconut 
-      key={key}
-      position={[1.5, -1.3, -0.5]}
-      isCracking={isCracking} 
-      onCrackComplete={handleCrackComplete}
+    <Image
+      url="/coco.jpg"
+      position={[1.5, -0.5, -0.5]}
+      scale={[1.2, 1.6, 1]}
     />
   )
 }
