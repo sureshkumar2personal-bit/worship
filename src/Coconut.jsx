@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
-import { Image } from '@react-three/drei'
+import { useFrame, useThree } from '@react-three/fiber'
+import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import gsap from 'gsap'
 
@@ -115,7 +115,7 @@ function CoconutWaterSpray({ active }) {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.04} color="#E8F4F8" transparent opacity={0.85} sizeAttenuation />
+      <pointsMaterial size={0.04} color="#051d25ff" transparent opacity={0.85} sizeAttenuation />
     </points>
   )
 }
@@ -230,7 +230,10 @@ function Coconut({ position, isCracking, onCrackComplete }) {
     }
   })
 
-  const coconutColor = "#3D2817"
+  const coconutColor = "#351a03ff"
+
+  const crackedTexture = useTexture('/cracked.jpg')
+  crackedTexture.wrapS = crackedTexture.wrapT = THREE.RepeatWrapping
 
   if (isCracked) {
     return (
@@ -245,13 +248,13 @@ function Coconut({ position, isCracking, onCrackComplete }) {
               side={THREE.DoubleSide}
             />
           </mesh>
-          <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.26, 0.28, 0.12, 32, 1, true]} />
-            <meshStandardMaterial color="#FFFFFF" roughness={0.25} side={THREE.DoubleSide} />
+          <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <torusGeometry args={[0.28, 0.06, 16, 32]} />
+            <meshStandardMaterial color="#5D4037" roughness={0.8} side={THREE.DoubleSide} />
           </mesh>
-          <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.26, 32]} />
-            <meshStandardMaterial color="#FFFEF0" roughness={0.15} />
+          <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <ringGeometry args={[0.24, 0.32, 32]} />
+            <meshStandardMaterial color="#5D4037" roughness={0.8} side={THREE.DoubleSide} />
           </mesh>
         </group>
 
@@ -265,13 +268,13 @@ function Coconut({ position, isCracking, onCrackComplete }) {
               side={THREE.DoubleSide}
             />
           </mesh>
-          <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.26, 0.28, 0.12, 32, 1, true]} />
-            <meshStandardMaterial color="#FFFFFF" roughness={0.25} side={THREE.DoubleSide} />
+          <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <torusGeometry args={[0.28, 0.06, 16, 32]} />
+            <meshStandardMaterial color="#100c0aff" roughness={0.8} side={THREE.DoubleSide} />
           </mesh>
-          <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.26, 32]} />
-            <meshStandardMaterial color="#FFFEF0" roughness={0.15} />
+          <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <ringGeometry args={[0.24, 0.32, 32]} />
+            <meshStandardMaterial color="#351105ff" roughness={0.8} side={THREE.DoubleSide} />
           </mesh>
         </group>
 
@@ -295,7 +298,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
 
       <mesh position={[0, 0.3, 0]}>
         <cylinderGeometry args={[0.08, 0.12, 0.1, 12]} />
-        <meshStandardMaterial color="#2D1F14" roughness={0.95} />
+        <meshStandardMaterial color="#140e0aff" roughness={0.95} />
       </mesh>
 
       {[...Array(6)].map((_, i) => (
@@ -309,7 +312,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
           rotation={[Math.random() * 0.4, Math.random() * Math.PI, Math.random() * 0.4]}
         >
           <planeGeometry args={[0.12, 0.006]} />
-          <meshStandardMaterial color="#1a0f0a" transparent opacity={0.5} side={THREE.DoubleSide} />
+          <meshStandardMaterial color="#13100fff" transparent opacity={0.5} side={THREE.DoubleSide} />
         </mesh>
       ))}
 
@@ -348,10 +351,11 @@ function CoconutController() {
   if (!coconutVisible) return null
 
   return (
-    <Image
-      url="/coco.jpg"
-      position={[1.5, -0.5, -0.5]}
-      scale={[1.2, 1.6, 1]}
+    <Coconut 
+      key={key}
+      position={[1.5, -1.3, -0.5]}
+      isCracking={isCracking} 
+      onCrackComplete={handleCrackComplete}
     />
   )
 }
