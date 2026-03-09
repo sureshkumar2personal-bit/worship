@@ -1,8 +1,231 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
-import { useTexture } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
+
+function Coconut({ position, isCracking, onCrackComplete }) {
+  const groupRef = useRef()
+  const topHalfRef = useRef()
+  const bottomHalfRef = useRef()
+  const [isCracked, setIsCracked] = useState(false)
+  const [scattered, setScattered] = useState(false)
+
+  useEffect(() => {
+    if (isCracking && !isCracked) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setIsCracked(true)
+          onCrackComplete?.()
+        }
+      })
+
+      tl.to(groupRef.current.position, {
+        y: position[1] + 1.2,
+        duration: 0.4,
+        ease: "power2.in"
+      })
+      .to(groupRef.current.rotation, {
+        x: -0.5,
+        z: 0.2,
+        duration: 0.4,
+        ease: "power2.in"
+      }, 0)
+      .to(groupRef.current.position, {
+        y: position[1] - 0.5,
+        duration: 0.15,
+        ease: "power3.in"
+      })
+      .to(groupRef.current.rotation, {
+        x: 0.8,
+        z: -0.4,
+        duration: 0.15,
+        ease: "power3.in"
+      }, "<")
+      .to(groupRef.current.scale, {
+        x: 1.1,
+        y: 0.9,
+        z: 1.1,
+        duration: 0.06,
+        ease: "power1.inOut",
+        yoyo: true,
+        repeat: 6
+      })
+      .to(groupRef.current.position, {
+        y: position[1],
+        duration: 0.3,
+        ease: "bounce.out"
+      })
+      .to(groupRef.current.rotation, {
+        x: 0,
+        z: 0,
+        duration: 0.4,
+        ease: "elastic.out(1, 0.5)"
+      }, "<")
+
+      return () => tl.kill()
+    }
+  }, [isCracking, isCracked, position, onCrackComplete])
+
+  useEffect(() => {
+    if (isCracked && !scattered) {
+      setScattered(true)
+
+      if (topHalfRef.current) {
+        gsap.to(topHalfRef.current.position, {
+          x: -0.5,
+          y: -0.15,
+          z: -0.2,
+          duration: 0.4,
+          ease: "power2.out"
+        })
+        gsap.to(topHalfRef.current.rotation, {
+          x: -Math.PI * 0.15,
+          y: -Math.PI * 0.25,
+          z: Math.PI * 0.1,
+          duration: 0.4,
+          ease: "power2.out"
+        })
+      }
+
+      if (bottomHalfRef.current) {
+        gsap.to(bottomHalfRef.current.position, {
+          x: 0.4,
+          y: -0.4,
+          z: 0.3,
+          duration: 0.4,
+          ease: "power2.out"
+        })
+        gsap.to(bottomHalfRef.current.rotation, {
+          x: Math.PI * 0.2,
+          y: Math.PI * 0.35,
+          z: -Math.PI * 0.15,
+          duration: 0.4,
+          ease: "power2.out"
+        })
+      }
+    }
+  }, [isCracked, scattered])
+
+  useFrame((state) => {
+    if (groupRef.current && !isCracking && !isCracked) {
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.06
+      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8) * 0.02
+    }
+  })
+
+  const coconutColor = "#5a3a1a"
+  const huskColor = "#4a3520"
+  const fleshColor = "#f7f1e8"
+  const edgeColor = "#3d2815"
+
+  if (isCracked) {
+    return (
+      <group position={position}>
+        <pointLight position={[0.3, 0.5, 0.6]} intensity={1.6} color="#fff2dd" distance={2.5} decay={2} />
+        <pointLight position={[-0.4, 0.2, -0.4]} intensity={0.8} color="#ffd9a6" distance={2} decay={2} />
+        
+        <group ref={topHalfRef} position={[0, 0.12, 0]} rotation={[-0.2, 0, 0]} scale={[1.12, 1.12, 1.12]}>
+          <mesh>
+            <sphereGeometry args={[0.36, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color={coconutColor} roughness={0.85} metalness={0.02} side={THREE.DoubleSide} />
+          </mesh>
+          
+          <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <ringGeometry args={[0.22, 0.34, 32]} />
+            <meshStandardMaterial color={huskColor} roughness={0.9} side={THREE.DoubleSide} />
+          </mesh>
+          
+          <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <circleGeometry args={[0.22, 32]} />
+            <meshStandardMaterial color={fleshColor} roughness={0.3} side={THREE.DoubleSide} />
+          </mesh>
+        </group>
+
+        <group ref={bottomHalfRef} position={[0, -0.12, 0]} rotation={[0.15, 0, 0]} scale={[1.12, 1.12, 1.12]}>
+          <mesh>
+            <sphereGeometry args={[0.36, 32, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
+            <meshStandardMaterial color={coconutColor} roughness={0.85} metalness={0.02} side={THREE.DoubleSide} />
+          </mesh>
+          
+          <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <ringGeometry args={[0.22, 0.34, 32]} />
+            <meshStandardMaterial color={huskColor} roughness={0.9} side={THREE.DoubleSide} />
+          </mesh>
+          
+          <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
+            <circleGeometry args={[0.22, 32]} />
+            <meshStandardMaterial color={fleshColor} roughness={0.3} side={THREE.DoubleSide} />
+          </mesh>
+        </group>
+
+        <mesh position={[-0.35, -0.28, 0.18]} rotation={[0.2, -0.6, 0.1]} scale={[0.7, 0.45, 0.5]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color={coconutColor} roughness={0.85} />
+        </mesh>
+        <mesh position={[-0.35, -0.28, 0.18]} rotation={[0.2, -0.6, 0.1]} scale={[0.65, 0.4, 0.45]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color={fleshColor} roughness={0.3} />
+        </mesh>
+
+        <mesh position={[0.32, -0.25, -0.22]} rotation={[-0.1, 0.8, -0.2]} scale={[0.55, 0.4, 0.45]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color={coconutColor} roughness={0.85} />
+        </mesh>
+        <mesh position={[0.32, -0.25, -0.22]} rotation={[-0.1, 0.8, -0.2]} scale={[0.5, 0.35, 0.4]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color={fleshColor} roughness={0.3} />
+        </mesh>
+
+        <mesh position={[0.05, -0.38, 0.35]} rotation={[0.3, 0.2, 0.15]} scale={[0.5, 0.35, 0.4]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color={coconutColor} roughness={0.85} />
+        </mesh>
+        <mesh position={[0.05, -0.38, 0.35]} rotation={[0.3, 0.2, 0.15]} scale={[0.45, 0.3, 0.35]}>
+          <sphereGeometry args={[0.16, 12, 12]} />
+          <meshStandardMaterial color={fleshColor} roughness={0.3} />
+        </mesh>
+
+        <CoconutParticles active={true} />
+        <CoconutWaterSpray active={true} />
+        <pointLight position={[0, 0, 0.4]} intensity={2.5} color="#FFFAF0" distance={2} decay={2} />
+      </group>
+    )
+  }
+
+  return (
+    <group ref={groupRef} position={position}>
+      <pointLight position={[0.3, 0.5, 0.6]} intensity={1.6} color="#fff2dd" distance={2.5} decay={2} />
+      <pointLight position={[-0.4, 0.2, -0.4]} intensity={0.8} color="#ffd9a6" distance={2} decay={2} />
+      
+      <mesh>
+        <sphereGeometry args={[0.36, 32, 32]} />
+        <meshStandardMaterial color={coconutColor} roughness={0.92} metalness={0.01} />
+      </mesh>
+
+      {[...Array(8)].map((_, i) => (
+        <mesh
+          key={i}
+          position={[
+            Math.sin(i * 0.785) * 0.35,
+            -0.32,
+            Math.cos(i * 0.785) * 0.35
+          ]}
+          rotation={[0, i * 0.785 + Math.PI / 2, Math.PI / 2]}
+        >
+          <torusGeometry args={[0.045, 0.018, 8, 12, Math.PI]} />
+          <meshStandardMaterial color={edgeColor} roughness={0.9} />
+        </mesh>
+      ))}
+
+      <mesh position={[0, 0.35, 0]}>
+        <cylinderGeometry args={[0.1, 0.14, 0.12, 12]} />
+        <meshStandardMaterial color={edgeColor} roughness={0.95} />
+      </mesh>
+
+      <CoconutParticles active={isCracking} />
+    </group>
+  )
+}
 
 function CoconutParticles({ active }) {
   const particlesRef = useRef()
@@ -115,209 +338,8 @@ function CoconutWaterSpray({ active }) {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.04} color="#051d25ff" transparent opacity={0.85} sizeAttenuation />
+      <pointsMaterial size={0.04} color="#8bd3ff" transparent opacity={0.75} sizeAttenuation />
     </points>
-  )
-}
-
-function Coconut({ position, isCracking, onCrackComplete }) {
-  const groupRef = useRef()
-  const topHalfRef = useRef()
-  const bottomHalfRef = useRef()
-  const [isCracked, setIsCracked] = useState(false)
-  const [scattered, setScattered] = useState(false)
-
-  useEffect(() => {
-    if (isCracking && !isCracked) {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setIsCracked(true)
-          onCrackComplete?.()
-        }
-      })
-
-      tl.to(groupRef.current.position, {
-        y: position[1] + 1.2,
-        duration: 0.4,
-        ease: "power2.in"
-      })
-      .to(groupRef.current.rotation, {
-        x: -0.5,
-        z: 0.2,
-        duration: 0.4,
-        ease: "power2.in"
-      }, 0)
-      .to(groupRef.current.position, {
-        y: position[1] - 0.5,
-        duration: 0.15,
-        ease: "power3.in"
-      })
-      .to(groupRef.current.rotation, {
-        x: 0.8,
-        z: -0.4,
-        duration: 0.15,
-        ease: "power3.in"
-      }, "<")
-      .to(groupRef.current.scale, {
-        x: 1.1,
-        y: 0.9,
-        z: 1.1,
-        duration: 0.06,
-        ease: "power1.inOut",
-        yoyo: true,
-        repeat: 6
-      })
-      .to(groupRef.current.position, {
-        y: position[1],
-        duration: 0.3,
-        ease: "bounce.out"
-      })
-      .to(groupRef.current.rotation, {
-        x: 0,
-        z: 0,
-        duration: 0.4,
-        ease: "elastic.out(1, 0.5)"
-      }, "<")
-
-      return () => tl.kill()
-    }
-  }, [isCracking, isCracked, position, onCrackComplete])
-
-  useEffect(() => {
-    if (isCracked && !scattered) {
-      setScattered(true)
-
-      if (topHalfRef.current) {
-        gsap.to(topHalfRef.current.position, {
-          x: -0.5,
-          y: -0.15,
-          z: -0.2,
-          duration: 0.4,
-          ease: "power2.out"
-        })
-        gsap.to(topHalfRef.current.rotation, {
-          x: -Math.PI * 0.15,
-          y: -Math.PI * 0.25,
-          z: Math.PI * 0.1,
-          duration: 0.4,
-          ease: "power2.out"
-        })
-      }
-
-      if (bottomHalfRef.current) {
-        gsap.to(bottomHalfRef.current.position, {
-          x: 0.4,
-          y: -0.4,
-          z: 0.3,
-          duration: 0.4,
-          ease: "power2.out"
-        })
-        gsap.to(bottomHalfRef.current.rotation, {
-          x: Math.PI * 0.2,
-          y: Math.PI * 0.35,
-          z: -Math.PI * 0.15,
-          duration: 0.4,
-          ease: "power2.out"
-        })
-      }
-    }
-  }, [isCracked, scattered])
-
-  useFrame((state) => {
-    if (groupRef.current && !isCracking && !isCracked) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.06
-      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8) * 0.02
-    }
-  })
-
-  const coconutColor = "#351a03ff"
-
-  const crackedTexture = useTexture('/cracked.jpg')
-  crackedTexture.wrapS = crackedTexture.wrapT = THREE.RepeatWrapping
-
-  if (isCracked) {
-    return (
-      <group position={position}>
-        <group ref={topHalfRef} position={[0, 0.12, 0]} rotation={[-0.2, 0, 0]}>
-          <mesh>
-            <sphereGeometry args={[0.34, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshStandardMaterial 
-              color={coconutColor} 
-              roughness={0.85}
-              metalness={0.02}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-          <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
-            <torusGeometry args={[0.28, 0.06, 16, 32]} />
-            <meshStandardMaterial color="#5D4037" roughness={0.8} side={THREE.DoubleSide} />
-          </mesh>
-          <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
-            <ringGeometry args={[0.24, 0.32, 32]} />
-            <meshStandardMaterial color="#5D4037" roughness={0.8} side={THREE.DoubleSide} />
-          </mesh>
-        </group>
-
-        <group ref={bottomHalfRef} position={[0, -0.12, 0]} rotation={[0.15, 0, 0]}>
-          <mesh>
-            <sphereGeometry args={[0.34, 32, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
-            <meshStandardMaterial 
-              color={coconutColor} 
-              roughness={0.85}
-              metalness={0.02}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-          <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
-            <torusGeometry args={[0.28, 0.06, 16, 32]} />
-            <meshStandardMaterial color="#100c0aff" roughness={0.8} side={THREE.DoubleSide} />
-          </mesh>
-          <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 1, 1]}>
-            <ringGeometry args={[0.24, 0.32, 32]} />
-            <meshStandardMaterial color="#351105ff" roughness={0.8} side={THREE.DoubleSide} />
-          </mesh>
-        </group>
-
-        <CoconutParticles active={true} />
-        <CoconutWaterSpray active={true} />
-        <pointLight position={[0, 0, 0.4]} intensity={2.5} color="#FFFAF0" distance={2} decay={2} />
-      </group>
-    )
-  }
-
-  return (
-    <group ref={groupRef} position={position}>
-      <mesh>
-        <sphereGeometry args={[0.32, 32, 32]} />
-        <meshStandardMaterial 
-          color={coconutColor} 
-          roughness={0.92}
-          metalness={0.01}
-        />
-      </mesh>
-
-      <mesh position={[0, 0.3, 0]}>
-        <cylinderGeometry args={[0.08, 0.12, 0.1, 12]} />
-        <meshStandardMaterial color="#140e0aff" roughness={0.95} />
-      </mesh>
-
-      {[...Array(6)].map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            Math.sin(i * 1.05) * 0.28,
-            (Math.random() - 0.5) * 0.35,
-            Math.cos(i * 1.05) * 0.28
-          ]}
-          rotation={[Math.random() * 0.4, Math.random() * Math.PI, Math.random() * 0.4]}
-        >
-          <planeGeometry args={[0.12, 0.006]} />
-          <meshStandardMaterial color="#13100fff" transparent opacity={0.5} side={THREE.DoubleSide} />
-        </mesh>
-      ))}
-
-      <CoconutParticles active={isCracking} />
-    </group>
   )
 }
 
@@ -343,10 +365,7 @@ function CoconutController() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [coconutVisible])
 
-  const handleCrackComplete = () => {
-    setTimeout(() => {
-    }, 300)
-  }
+  const handleCrackComplete = () => {}
 
   if (!coconutVisible) return null
 
