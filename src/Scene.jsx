@@ -18,6 +18,7 @@ function GLBModel() {
 }
 
 useGLTF.preload('/murugan.glb')
+useGLTF.preload('/flower.glb')
 
 function Scene() {
   const { viewport, scene } = useThree()
@@ -131,7 +132,7 @@ function Scene() {
         <IncenseStand position={[0, 0, 0]} />
       </group>
 
-      <group position={[1.5, -2.5, -2]} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
+      <group position={[1.5, -1.5, -2]} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
         <Flower />
       </group>
 
