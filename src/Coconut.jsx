@@ -1,8 +1,15 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Image } from '@react-three/drei'
+import { Image, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import gsap from './gsapLite'
+
+function CoconutModel() {
+  const { scene } = useGLTF('/coconut.glb')
+  return <primitive object={scene.clone()} scale={[0.5, 0.5, 0.5]} />
+}
+
+useGLTF.preload('/coconut.glb')
 
 function CoconutParticles({ active }) {
   const particlesRef = useRef()
@@ -230,51 +237,10 @@ function Coconut({ position, isCracking, onCrackComplete }) {
     }
   })
 
-  const coconutColor = "#3D2817"
-
   if (isCracked) {
     return (
       <group position={position}>
-        <group ref={topHalfRef} position={[0, 0.12, 0]} rotation={[-0.2, 0, 0]}>
-          <mesh>
-            <sphereGeometry args={[0.34, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshStandardMaterial 
-              color={coconutColor} 
-              roughness={0.85}
-              metalness={0.02}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-          <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.26, 0.28, 0.12, 32, 1, true]} />
-            <meshStandardMaterial color="#FFFFFF" roughness={0.25} side={THREE.DoubleSide} />
-          </mesh>
-          <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.26, 32]} />
-            <meshStandardMaterial color="#FFFEF0" roughness={0.15} />
-          </mesh>
-        </group>
-
-        <group ref={bottomHalfRef} position={[0, -0.12, 0]} rotation={[0.15, 0, 0]}>
-          <mesh>
-            <sphereGeometry args={[0.34, 32, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
-            <meshStandardMaterial 
-              color={coconutColor} 
-              roughness={0.85}
-              metalness={0.02}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-          <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.26, 0.28, 0.12, 32, 1, true]} />
-            <meshStandardMaterial color="#FFFFFF" roughness={0.25} side={THREE.DoubleSide} />
-          </mesh>
-          <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.26, 32]} />
-            <meshStandardMaterial color="#FFFEF0" roughness={0.15} />
-          </mesh>
-        </group>
-
+        <CoconutModel />
         <CoconutParticles active={true} />
         <CoconutWaterSpray active={true} />
         <pointLight position={[0, 0, 0.4]} intensity={2.5} color="#FFFAF0" distance={2} decay={2} />
@@ -284,19 +250,7 @@ function Coconut({ position, isCracking, onCrackComplete }) {
 
   return (
     <group ref={groupRef} position={position}>
-      <mesh>
-        <sphereGeometry args={[0.32, 32, 32]} />
-        <meshStandardMaterial 
-          color={coconutColor} 
-          roughness={0.92}
-          metalness={0.01}
-        />
-      </mesh>
-
-      <mesh position={[0, 0.3, 0]}>
-        <cylinderGeometry args={[0.08, 0.12, 0.1, 12]} />
-        <meshStandardMaterial color="#2D1F14" roughness={0.95} />
-      </mesh>
+      <CoconutModel />
 
       {[...Array(6)].map((_, i) => (
         <mesh
