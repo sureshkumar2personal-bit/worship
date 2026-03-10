@@ -348,20 +348,13 @@ function CoconutController() {
   if (!coconutVisible) return null
 
   return (
-    <group position={[1.5, -0.8, -0.5]}>
-      <mesh>
-        <sphereGeometry args={[0.35, 32, 32]} />
-        <meshStandardMaterial 
-          color="#4a3728" 
-          roughness={0.85}
-          metalness={0.05}
-        />
-      </mesh>
-      <mesh position={[0, 0.32, 0]}>
-        <cylinderGeometry args={[0.1, 0.14, 0.12, 12]} />
-        <meshStandardMaterial color="#2d1f14" roughness={0.95} />
-      </mesh>
-    </group>
+    <Image
+      url="/coco.avif"
+      position={[1.5, -0.5, -0.5]}
+      scale={[1.2, 1.6, 1]}
+      transparent
+      opacity={1}
+    />
   )
 }
 
