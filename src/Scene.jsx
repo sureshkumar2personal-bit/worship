@@ -4,11 +4,12 @@ import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
-import IncenseStand from './IncenseStand'
 import TempleBell from './TempleBell'
+import Incense from './IncenseStand'
 import TempleDust from './TempleDust'
 import Coconut from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
+import Flower from './Flower'
 import Deepam from './Deepam'
 
 function GLBModel() {
@@ -17,6 +18,7 @@ function GLBModel() {
 }
 
 useGLTF.preload('/murugan.glb')
+useGLTF.preload('/flower.glb')
 
 function Scene() {
   const { viewport, scene } = useThree()
@@ -126,8 +128,10 @@ function Scene() {
         <GLBModel />
       </Suspense>
 
-      <group position={[-1.5, -2, -1.5]} scale={[1.5, 1.5, 1.5]}>
-        <IncenseStand position={[0, 0, 0]} />
+      <Incense position={[-1.1, -2, -1.8]} />
+
+      <group position={[1.5, -1.5, -2]} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
+        <Flower />
       </group>
 
       <group position={[1.8, -0.5, -1.5]}>

@@ -200,6 +200,16 @@ function Deepam({ position, isOn, side }) {
         />
       </mesh>
 
+      <mesh position={[0, -0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.28, 32]} />
+        <meshStandardMaterial 
+          color="#B8860B" 
+          roughness={0.3} 
+          metalness={0.8}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
       <mesh position={[0, 0.04, 0]}>
         <cylinderGeometry args={[0.22, 0.26, 0.02, 16]} />
         <meshStandardMaterial 
