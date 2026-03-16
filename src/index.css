@@ -15,3 +15,25 @@ canvas {
   display: block;
   cursor: none;
 }
+
+.astrology-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #c56cf0 0%, #7b68ee 100%);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(197, 108, 240, 0.4);
+}
+
+.astrology-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 108, 240, 0.6);
+}
