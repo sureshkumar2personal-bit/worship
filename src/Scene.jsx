@@ -5,7 +5,6 @@ import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
 import IncenseStand from './IncenseStand'
-import TempleBell from './TempleBell'
 import TempleDust from './TempleDust'
 import CoconutController from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
@@ -16,7 +15,6 @@ const incensePosition = [-1.5, -2, -1.5]
 const flowerPosition = [1.5, -1.5, -2]
 const coconutPosition = [1.5, -1.55, -0.9]
 const rightLampPosition = [1.8, 1.75, -1.75]
-const bellPosition = [rightLampPosition[0], rightLampPosition[1] - 0.72, rightLampPosition[2]]
 
 function getFacingRotationY(from, to) {
   return Math.atan2(to[0] - from[0], to[2] - from[2])
@@ -37,7 +35,6 @@ function Scene() {
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const [flowerActive, setFlowerActive] = useState(false)
-  const [bellRinging, setBellRinging] = useState(false)
   const [lampSyncSignal, setLampSyncSignal] = useState(0)
   const [lampsOn, setLampsOn] = useState(false)
 
@@ -52,9 +49,6 @@ function Scene() {
           setLampSyncSignal(signal => signal + 1)
           return next
         })
-      }
-      if (e.key === 'b' || e.key === 'B') {
-        setBellRinging(prev => !prev)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -150,8 +144,6 @@ function Scene() {
       <group position={flowerPosition} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
         <Flower />
       </group>
-
-      <TempleBell position={bellPosition} isRinging={bellRinging} />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
         <planeGeometry args={[20, 20]} />
