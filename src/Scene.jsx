@@ -4,13 +4,23 @@ import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import AartiPlate from './AartiPlate'
 import FireParticles from './FireParticles'
+import IncenseStand from './IncenseStand'
 import TempleBell from './TempleBell'
-import Incense from './IncenseStand'
 import TempleDust from './TempleDust'
-import Coconut from './Coconut'
+import CoconutController from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
 import Flower from './Flower'
 import Deepam from './Deepam'
+
+const incensePosition = [-1.5, -2, -1.5]
+const flowerPosition = [1.5, -1.5, -2]
+const coconutPosition = [1.5, -1.55, -0.9]
+const rightLampPosition = [1.8, 1.75, -1.75]
+const bellPosition = [rightLampPosition[0], rightLampPosition[1] - 0.72, rightLampPosition[2]]
+
+function getFacingRotationY(from, to) {
+  return Math.atan2(to[0] - from[0], to[2] - from[2])
+}
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
@@ -27,8 +37,9 @@ function Scene() {
   const cursorVelocity = useRef({ x: 0, y: 0 })
   const spotLightRef = useRef()
   const [flowerActive, setFlowerActive] = useState(false)
-  const [lampOn, setLampOn] = useState(false)
   const [bellRinging, setBellRinging] = useState(false)
+  const [lampSyncSignal, setLampSyncSignal] = useState(0)
+  const [lampsOn, setLampsOn] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -36,7 +47,11 @@ function Scene() {
         setFlowerActive(prev => !prev)
       }
       if (e.key === 'l' || e.key === 'L') {
-        setLampOn(prev => !prev)
+        setLampsOn(prev => {
+          const next = !prev
+          setLampSyncSignal(signal => signal + 1)
+          return next
+        })
       }
       if (e.key === 'b' || e.key === 'B') {
         setBellRinging(prev => !prev)
@@ -45,6 +60,7 @@ function Scene() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
+
   const spotLightTarget = useMemo(() => {
     const target = new THREE.Object3D()
     target.position.set(0, 0.5, -2)
@@ -61,17 +77,17 @@ function Scene() {
 
   useFrame((state) => {
     const mouse = state.pointer
-    
+
     cursorTarget.current.x = mouse.x * (viewport.width / 2.5)
     cursorTarget.current.y = mouse.y * (viewport.height / 2.5) + 0.5
 
     if (cursorRef.current) {
       const prevX = cursorRef.current.position.x
       const prevY = cursorRef.current.position.y
-      
+
       cursorRef.current.position.x += (cursorTarget.current.x - cursorRef.current.position.x) * 0.12
       cursorRef.current.position.y += (cursorTarget.current.y - cursorRef.current.position.y) * 0.12
-      
+
       cursorVelocity.current.x = cursorRef.current.position.x - prevX
       cursorVelocity.current.y = cursorRef.current.position.y - prevY
     }
@@ -128,15 +144,15 @@ function Scene() {
         <GLBModel />
       </Suspense>
 
-      <Incense position={[-1.1, -2, -1.8]} />
+      <group position={incensePosition} scale={[1.5, 1.5, 1.5]}>
+        <IncenseStand position={[0, 0, 0]} />
+      </group>
 
-      <group position={[1.5, -1.5, -2]} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
+      <group position={flowerPosition} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
         <Flower />
       </group>
 
-      <group position={[1.8, -0.5, -1.5]}>
-        <TempleBell isRinging={bellRinging} />
-      </group>
+      <TempleBell position={bellPosition} isRinging={bellRinging} />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
         <planeGeometry args={[20, 20]} />
@@ -150,13 +166,15 @@ function Scene() {
         <FireParticles position={[0, 0.55, 0.5]} count={80} velocity={cursorVelocity} />
       </group>
 
-      <Coconut />
-
-      <FlowerSprinkler 
-        isActive={flowerActive}
+      <CoconutController
+        position={coconutPosition}
+        rotation={[0, getFacingRotationY(coconutPosition, incensePosition), 0]}
+        scale={[0.95, 0.95, 0.95]}
       />
 
-      <Deepam isOn={lampOn} />
+      <FlowerSprinkler isActive={flowerActive} />
+
+      <Deepam syncSignal={lampSyncSignal} syncedIsOn={lampsOn} />
     </>
   )
 }
