@@ -10,11 +10,16 @@ import CoconutController from './Coconut'
 import FlowerSprinkler from './FlowerSprinkler'
 import Flower from './Flower'
 import Deepam from './Deepam'
+import TempleBell from './TempleBell'
 
-const incensePosition = [-1.5, -2, -1.5]
-const flowerPosition = [1.5, -1.5, -2]
-const coconutPosition = [1.5, -1.55, -0.9]
-const rightLampPosition = [1.8, 1.75, -1.75]
+const incensePosition = [-1, -2, -1.5]
+const flowerPosition = [1.1, -0.9, -2]
+// const bellBasePosition = [3, 1.8, -2]
+const coconutPosition = [1.9, -0.6, -0.9]
+const rightLampPosition = [1.8, 2, -1.75]
+const bellPosition = [0.9, -0.9, -2]
+const templeLayoutPosition = [0, 2, -5]
+const templeLayoutScale = [12, 10, 10]
 
 function getFacingRotationY(from, to) {
   return Math.atan2(to[0] - from[0], to[2] - from[2])
@@ -22,11 +27,30 @@ function getFacingRotationY(from, to) {
 
 function GLBModel() {
   const { scene } = useGLTF('/murugan.glb')
-  return <primitive object={scene} position={[0, 0.5, -2]} scale={[4, 4, 4]} />
+  return <primitive object={scene} position={[0, 0.5, -2]} scale={[3, 3, 2]} />
 }
+
+function TempleLayout() {
+  const { scene } = useGLTF('/templelay.glb')
+  return <primitive object={scene} position={templeLayoutPosition} rotation={[0, Math.PI, 0]} scale={templeLayoutScale} />
+}
+
+// function BellBase({ position = [0, 0, 0], scale = [1, 1, 1] }) {
+//   const { scene: baseScene } = useGLTF('/bellbase.glb')
+//   const { scene: nipScene } = useGLTF('/bellnip.glb')
+//   return (
+//     <group position={position} scale={scale}>
+//       <primitive object={baseScene} />
+//       <primitive object={nipScene} position={[0, 1, 16]} scale={[0.5, 0.5, 0.5]} />
+//     </group>
+//   )
+// }
 
 useGLTF.preload('/murugan.glb')
 useGLTF.preload('/flower.glb')
+useGLTF.preload('/templelay.glb')
+// useGLTF.preload('/bellbase.glb')
+// useGLTF.preload('/bellnip.glb')
 
 function Scene() {
   const { viewport, scene } = useThree()
@@ -37,11 +61,16 @@ function Scene() {
   const [flowerActive, setFlowerActive] = useState(false)
   const [lampSyncSignal, setLampSyncSignal] = useState(0)
   const [lampsOn, setLampsOn] = useState(false)
-
+  const [bellShakeActive, setBellShakeActive] = useState(false)
+  const [incenseSmokeOn, setIncenseSmokeOn] = useState(false)
+  const [camphorFireOn, setCamphorFireOn] = useState(false)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'f' || e.key === 'F') {
         setFlowerActive(prev => !prev)
+      }
+      if ((e.key === 'b' || e.key === 'B') && !e.repeat) {
+        setBellShakeActive(prev => !prev)
       }
       if (e.key === 'l' || e.key === 'L') {
         setLampsOn(prev => {
@@ -50,9 +79,18 @@ function Scene() {
           return next
         })
       }
+      if ((e.key === 'i' || e.key === 'I') && !e.repeat) {
+        setIncenseSmokeOn(prev => !prev)
+      }
+      if ((e.key === 'c' || e.key === 'C') && !e.repeat) {
+        setCamphorFireOn(prev => !prev)
+      }
     }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
   }, [])
 
   const spotLightTarget = useMemo(() => {
@@ -106,6 +144,13 @@ function Scene() {
         distance={5}
         decay={2}
       />
+      <pointLight
+        position={[coconutPosition[0] + 0.35, coconutPosition[1] + 1.1, coconutPosition[2] + 0.55]}
+        intensity={20}
+        color="#ffd6a3"
+        distance={4.5}
+        decay={1.8}
+      />
       <spotLight
         position={[5, 5, 5]}
         intensity={1}
@@ -135,12 +180,20 @@ function Scene() {
       <pointLight position={[0, 5, 0]} intensity={15} color="#ffdd88" distance={25} decay={0.5} />
 
       <Suspense fallback={null}>
+        <TempleLayout />
+      </Suspense>
+
+      <Suspense fallback={null}>
         <GLBModel />
       </Suspense>
 
       <group position={incensePosition} scale={[1.5, 1.5, 1.5]}>
-        <IncenseStand position={[0, 0, 0]} />
+        <IncenseStand position={[0.3, 1, 1]} smokeEnabled={incenseSmokeOn} />
       </group>
+
+      {/* <Suspense fallback={null}>
+        <BellBase position={bellBasePosition} scale={[0.2, 0.2, 0.2]} />
+      </Suspense> */}
 
       <group position={flowerPosition} rotation={[0, -0.5, 0]} scale={[0.8, 0.8, 0.8]}>
         <Flower />
@@ -155,7 +208,9 @@ function Scene() {
 
       <group ref={cursorRef} position={[0, 0.5, 3]} scale={[0.12, 0.12, 0.12]} rotation={[0, Math.PI, 0]}>
         <AartiPlate />
-        <FireParticles position={[0, 0.55, 0.5]} count={80} velocity={cursorVelocity} />
+        {camphorFireOn && (
+          <FireParticles position={[0, 0.55, 0.5]} count={80} velocity={cursorVelocity} />
+        )}
       </group>
 
       <CoconutController
@@ -167,6 +222,12 @@ function Scene() {
       <FlowerSprinkler isActive={flowerActive} />
 
       <Deepam syncSignal={lampSyncSignal} syncedIsOn={lampsOn} />
+
+      <Suspense fallback={null}>
+        <group rotation={[(88 * Math.PI) / 180, 0, 0]}>
+          <TempleBell isRinging={false} shakeBell={bellShakeActive} position={bellPosition} />
+        </group>
+      </Suspense>
     </>
   )
 }

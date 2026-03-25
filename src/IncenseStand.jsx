@@ -2,7 +2,7 @@ import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-function Incense({ position = [0, 0, 0] }) {
+function Incense({ position = [0, 0, 0], smokeEnabled = true }) {
   const smokeGroup1 = useRef()
   const smokeGroup2 = useRef()
   const smokeGroup3 = useRef()
@@ -34,28 +34,22 @@ function Incense({ position = [0, 0, 0] }) {
     return texture
   }, [])
 
-  const createSmokeParticles = () => {
-    return [...Array(particleCount)].map((_, i) => (
-      <sprite
-        key={i}
-        position={[0, 0.52 + i * 0.1, 0]}
-        scale={[0.04, 0.15, 1]}
-      >
-        <spriteMaterial
-          map={smokeTexture}
-          transparent
-          opacity={0.6 - (i / particleCount) * 0.5}
-          depthWrite={false}
-          blending={THREE.NormalBlending}
-        />
-      </sprite>
-    ))
-  }
-
   const godPosition = useMemo(() => new THREE.Vector3(0, 1, -2), [])
   const godRadius = 1.2
 
   useFrame((state) => {
+    if (!smokeEnabled) {
+      ;[smokeGroup1.current, smokeGroup2.current, smokeGroup3.current].forEach((group) => {
+        if (!group) return
+        group.children.forEach((child) => {
+          if (child.isSprite) {
+            child.material.opacity = 0
+          }
+        })
+      })
+      return
+    }
+
     const time = state.clock.elapsedTime
 
     if (smokeGroup1.current) {
@@ -67,7 +61,7 @@ function Incense({ position = [0, 0, 0] }) {
           const twistAngle = progress * Math.PI * 4
           const twistRadius = progress * 0.08
           
-          let y = 0.52 + progress * 2.5
+          let y = 0.26 + progress * 1.25
           let x = Math.sin(twistAngle) * twistRadius
           let z = Math.cos(twistAngle) * twistRadius
           
@@ -93,7 +87,7 @@ function Incense({ position = [0, 0, 0] }) {
           child.position.x = x
           child.position.z = z
           
-          child.scale.set(0.04 + progress * 0.06, 0.15 + progress * 0.15, 1)
+          child.scale.set(0.02 + progress * 0.03, 0.075 + progress * 0.075, 1)
           child.material.opacity = opacity
           
           child.rotation.z = twistAngle * 0.5
@@ -109,7 +103,7 @@ function Incense({ position = [0, 0, 0] }) {
           const twistAngle = progress * Math.PI * 4 + Math.PI * 0.66
           const twistRadius = progress * 0.08
           
-          let y = 0.52 + progress * 2.5
+          let y = 0.26 + progress * 1.25
           let x = Math.sin(twistAngle) * twistRadius
           let z = Math.cos(twistAngle) * twistRadius
           
@@ -135,7 +129,7 @@ function Incense({ position = [0, 0, 0] }) {
           child.position.x = x
           child.position.z = z
           
-          child.scale.set(0.04 + progress * 0.06, 0.15 + progress * 0.15, 1)
+          child.scale.set(0.02 + progress * 0.03, 0.075 + progress * 0.075, 1)
           child.material.opacity = opacity
           
           child.rotation.z = twistAngle * 0.5
@@ -151,7 +145,7 @@ function Incense({ position = [0, 0, 0] }) {
           const twistAngle = progress * Math.PI * 4 + Math.PI * 1.33
           const twistRadius = progress * 0.08
           
-          let y = 0.52 + progress * 2.5
+          let y = 0.26 + progress * 1.25
           let x = Math.sin(twistAngle) * twistRadius
           let z = Math.cos(twistAngle) * twistRadius
           
@@ -177,7 +171,7 @@ function Incense({ position = [0, 0, 0] }) {
           child.position.x = x
           child.position.z = z
           
-          child.scale.set(0.04 + progress * 0.06, 0.15 + progress * 0.15, 1)
+          child.scale.set(0.02 + progress * 0.03, 0.075 + progress * 0.075, 1)
           child.material.opacity = opacity
           
           child.rotation.z = twistAngle * 0.5
@@ -188,50 +182,92 @@ function Incense({ position = [0, 0, 0] }) {
 
   return (
     <group position={position}>
-      <mesh position={[0, 0.08, 0]}>
-        <cylinderGeometry args={[0.08, 0.09, 0.16, 8]} />
+      <mesh position={[0, 0.04, 0]}>
+        <cylinderGeometry args={[0.04, 0.045, 0.08, 8]} />
         <meshStandardMaterial color="#D2B48C" roughness={0.7} />
       </mesh>
 
-      <group position={[0, 0.16, 0]} rotation={[0.2, 0, 0.2]}>
-        <mesh position={[0, 0.2, 0]}>
-          <cylinderGeometry args={[0.012, 0.015, 0.48, 8]} />
+      <group position={[0, 0.08, 0]} rotation={[0.2, 0, 0.2]}>
+        <mesh position={[0, 0.1, 0]}>
+          <cylinderGeometry args={[0.006, 0.0075, 0.24, 8]} />
           <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.5, 0]}>
-          <sphereGeometry args={[0.005, 6, 6]} />
+        <mesh position={[0, 0.25, 0]}>
+          <sphereGeometry args={[0.003, 6, 6]} />
           <meshBasicMaterial color="#FF4500" />
         </mesh>
         <group ref={smokeGroup1}>
-          {createSmokeParticles()}
+          {[...Array(particleCount)].map((_, i) => (
+            <sprite
+              key={i}
+              position={[0, 0.26 + i * 0.05, 0]}
+              scale={[0.02, 0.075, 1]}
+            >
+              <spriteMaterial
+                map={smokeTexture}
+                transparent
+                opacity={smokeEnabled ? 0.6 - (i / particleCount) * 0.5 : 0}
+                depthWrite={false}
+                blending={THREE.NormalBlending}
+              />
+            </sprite>
+          ))}
         </group>
       </group>
 
-      <group position={[0, 0.16, 0]} rotation={[0.2, 0, -0.2]}>
-        <mesh position={[0, 0.2, 0]}>
-          <cylinderGeometry args={[0.012, 0.015, 0.48, 8]} />
+      <group position={[0, 0.08, 0]} rotation={[0.2, 0, -0.2]}>
+        <mesh position={[0, 0.1, 0]}>
+          <cylinderGeometry args={[0.006, 0.0075, 0.24, 8]} />
           <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.5, 0]}>
-          <sphereGeometry args={[0.005, 6, 6]} />
+        <mesh position={[0, 0.25, 0]}>
+          <sphereGeometry args={[0.003, 6, 6]} />
           <meshBasicMaterial color="#FF4500" />
         </mesh>
         <group ref={smokeGroup2}>
-          {createSmokeParticles()}
+          {[...Array(particleCount)].map((_, i) => (
+            <sprite
+              key={i}
+              position={[0, 0.26 + i * 0.05, 0]}
+              scale={[0.02, 0.075, 1]}
+            >
+              <spriteMaterial
+                map={smokeTexture}
+                transparent
+                opacity={smokeEnabled ? 0.6 - (i / particleCount) * 0.5 : 0}
+                depthWrite={false}
+                blending={THREE.NormalBlending}
+              />
+            </sprite>
+          ))}
         </group>
       </group>
 
-      <group position={[0, 0.16, 0]} rotation={[-0.2, 0, 0]}>
-        <mesh position={[0, 0.2, 0]}>
-          <cylinderGeometry args={[0.012, 0.015, 0.48, 8]} />
+      <group position={[0, 0.08, 0]} rotation={[-0.2, 0, 0]}>
+        <mesh position={[0, 0.1, 0]}>
+          <cylinderGeometry args={[0.006, 0.0075, 0.24, 8]} />
           <meshStandardMaterial color="#1a1a1a" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.5, 0]}>
-          <sphereGeometry args={[0.005, 6, 6]} />
+        <mesh position={[0, 0.25, 0]}>
+          <sphereGeometry args={[0.003, 6, 6]} />
           <meshBasicMaterial color="#FF4500" />
         </mesh>
         <group ref={smokeGroup3}>
-          {createSmokeParticles()}
+          {[...Array(particleCount)].map((_, i) => (
+            <sprite
+              key={i}
+              position={[0, 0.26 + i * 0.05, 0]}
+              scale={[0.02, 0.075, 1]}
+            >
+              <spriteMaterial
+                map={smokeTexture}
+                transparent
+                opacity={smokeEnabled ? 0.6 - (i / particleCount) * 0.5 : 0}
+                depthWrite={false}
+                blending={THREE.NormalBlending}
+              />
+            </sprite>
+          ))}
         </group>
       </group>
     </group>
