@@ -1,6 +1,18 @@
+import * as THREE from 'three'
+
 function AartiPlate() {
   return (
     <group>
+      <mesh position={[0, -0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[1.15, 64]} />
+        <meshStandardMaterial 
+          color="#B8860B" 
+          roughness={0.15} 
+          metalness={0.95}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
       <mesh position={[0, 0, 0]}>
         <cylinderGeometry args={[1.2, 1.15, 0.06, 64]} />
         <meshStandardMaterial 

@@ -5,7 +5,6 @@ import gsap from './gsapLite'
 
 function RoseFlower({ position, delay }) {
   const meshRef = useRef()
-  const startPos = useMemo(() => [...position], [position])
   
   useEffect(() => {
     if (meshRef.current) {

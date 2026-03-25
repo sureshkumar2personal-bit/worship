@@ -258,14 +258,14 @@ function DeepamController({ syncSignal = 0, syncedIsOn = false }) {
   return (
     <>
       <DeepamInstance
-        position={[-1.8, 1.75, -1.75]}
+        position={[-1.5, 1.75, -1.75]}
         rotation={[0, 0.18, 0]}
         scale={[1.2, 1.2, 1.2]}
         syncSignal={syncSignal}
         syncedIsOn={syncedIsOn}
       />
       <DeepamInstance
-        position={[1.8, 1.75, -1.75]}
+        position={[1.5, 1.75, -1.75]}
         rotation={[0, -0.18, 0]}
         scale={[1.2, 1.2, 1.2]}
         syncSignal={syncSignal}

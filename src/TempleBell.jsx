@@ -1,11 +1,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import gsap from 'gsap'
 
 function BellModel({ scale = [0.6, 0.6, 0.6] }) {
-  const { scene } = useGLTF('/bell.glb')
+  const { scene } = useGLTF('/bell2.glb')
   const bellRootRef = useRef()
   const bellScene = useMemo(() => {
     const cloned = scene.clone()
@@ -48,12 +47,28 @@ function BellModel({ scale = [0.6, 0.6, 0.6] }) {
   )
 }
 
-useGLTF.preload('/bell.glb')
+function NipModel() {
+  return (
+    <group>
+      <mesh castShadow receiveShadow position={[0, -0.22, 0]}>
+        <cylinderGeometry args={[0.028, 0.028, 0.26, 24]} />
+        <meshStandardMaterial color="#8a5a2b" metalness={0.65} roughness={0.3} />
+      </mesh>
+      <mesh castShadow receiveShadow position={[0, -0.4, 0]}>
+        <sphereGeometry args={[0.072, 24, 24]} />
+        <meshStandardMaterial color="#b87432" metalness={0.55} roughness={0.35} />
+      </mesh>
+    </group>
+  )
+}
 
-function TempleBell({ isRinging, position = [0, 0, 0] }) {
+useGLTF.preload('/bell2.glb')
+
+function TempleBell({ isRinging, shakeBell = false, position = [0, 0, 0] }) {
   const bellRef = useRef()
   const lightRef = useRef()
   const ringIntervalRef = useRef(null)
+  const bellShakeTlRef = useRef(null)
 
   useEffect(() => {
     if (isRinging && bellRef.current) {
@@ -120,15 +135,42 @@ function TempleBell({ isRinging, position = [0, 0, 0] }) {
     }
   }, [isRinging])
 
-  useFrame((state) => {
-    if (!isRinging && bellRef.current) {
-      bellRef.current.rotation.z = -Math.sin(state.clock.elapsedTime * 0.5) * 0.02
+  useEffect(() => {
+    if (!bellRef.current) {
+      return
     }
-  })
+
+    if (bellShakeTlRef.current) {
+      bellShakeTlRef.current.kill()
+      bellShakeTlRef.current = null
+    }
+    gsap.killTweensOf(bellRef.current.position)
+
+    if (shakeBell) {
+      bellRef.current.position.x = position[0] - 0.08
+      bellShakeTlRef.current = gsap.timeline({ repeat: -1, yoyo: true })
+      bellShakeTlRef.current.to(bellRef.current.position, {
+        x: position[0] + 0.08,
+        duration: 0.45,
+        ease: 'sine.inOut',
+      })
+      return
+    }
+
+    gsap.to(bellRef.current.position, {
+      x: position[0],
+      y: position[1],
+      z: position[2],
+      duration: 0.25,
+      ease: 'power2.out',
+    })
+  }, [position, shakeBell])
 
   return (
     <group ref={bellRef} position={position}>
-      <BellModel scale={[0.58, 0.58, 0.58]} />
+      <group position={[0, 0, -0.08]}>
+        <BellModel scale={[0.9, 0.9, 0.9]} />
+      </group>
       <pointLight
         ref={lightRef}
         position={[0, -0.2, 0.2]}
