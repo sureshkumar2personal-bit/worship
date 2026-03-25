@@ -159,7 +159,7 @@ function Flame({ isOn, offset = [0, 0.95, 0.05] }) {
 }
 
 function LampModel({ scale = [0.42, 0.42, 0.42] }) {
-  const { scene } = useGLTF('/lamp.glb')
+  const { scene } = useGLTF('/sample.glb')
   const lampRootRef = useRef()
   const lampScene = useMemo(() => {
     const cloned = scene.clone()
@@ -198,7 +198,7 @@ function LampModel({ scale = [0.42, 0.42, 0.42] }) {
   )
 }
 
-useGLTF.preload('/lamp.glb')
+useGLTF.preload('/sample.glb')
 
 function DeepamInstance({
   position,
@@ -259,14 +259,14 @@ function DeepamController({ syncSignal = 0, syncedIsOn = false }) {
     <>
       <DeepamInstance
         position={[-1.8, 1.75, -1.75]}
-        rotation={[0, 0.18, 0]}
+        rotation={[0, 0.349, 0]}
         scale={[1.2, 1.2, 1.2]}
         syncSignal={syncSignal}
         syncedIsOn={syncedIsOn}
       />
       <DeepamInstance
         position={[1.8, 1.75, -1.75]}
-        rotation={[0, -0.18, 0]}
+        rotation={[0, -0.349, 0]}
         scale={[1.2, 1.2, 1.2]}
         syncSignal={syncSignal}
         syncedIsOn={syncedIsOn}
