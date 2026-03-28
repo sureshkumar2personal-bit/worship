@@ -159,7 +159,7 @@ function Flame({ isOn, offset = [0, 0.95, 0.05] }) {
 }
 
 function LampModel({ scale = [0.42, 0.42, 0.42] }) {
-  const { scene } = useGLTF('/sample.glb')
+  const { scene } = useGLTF('/lamp.glb')
   const lampRootRef = useRef()
   const lampScene = useMemo(() => {
     const cloned = scene.clone()
@@ -198,7 +198,7 @@ function LampModel({ scale = [0.42, 0.42, 0.42] }) {
   )
 }
 
-useGLTF.preload('/sample.glb')
+useGLTF.preload('/lamp.glb')
 
 function DeepamInstance({
   position,
