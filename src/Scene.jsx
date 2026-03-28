@@ -11,6 +11,11 @@ import FlowerSprinkler from './FlowerSprinkler'
 import Flower from './Flower'
 import Deepam from './Deepam'
 import TempleBell from './TempleBell'
+import Peacock from './Peacock'
+import Boy from './Boy'
+import Poo from './Poo'
+import Leaf from './Leaf'
+import Food from './Food'
 
 const incensePosition = [-1, -2, -1.5]
 const flowerPosition = [1.1, -0.9, -2]
@@ -49,6 +54,12 @@ function TempleLayout() {
 useGLTF.preload('/murugan.glb')
 useGLTF.preload('/flower.glb')
 useGLTF.preload('/templelay.glb')
+useGLTF.preload('/peacock1.glb')
+useGLTF.preload('/boy1.glb')
+useGLTF.preload('/poo.glb')
+useGLTF.preload('/leaf.glb')
+useGLTF.preload('/food.glb')
+useGLTF.preload('/flower_deco.glb')
 // useGLTF.preload('/bellbase.glb')
 // useGLTF.preload('/bellnip.glb')
 
@@ -185,6 +196,27 @@ function Scene() {
 
       <Suspense fallback={null}>
         <GLBModel />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Peacock position={[-1.9, -0.5, 0.5]} scale={[1, 1, 1]} rotation={[0, 1.5, 0]} />
+        <Peacock position={[1.9, -0.5, 0.5]} scale={[1, 1, 1]} rotation={[0, -1.5, 0]} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Boy position={[0.7, -0.8, 1.5]} scale={[1, 1, 1]} rotation={[0, Math.PI + 0.8, 0]} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Poo position={[0, 3, -2]} scale={[4, 2.5, 1.5]} rotation={[0, 0, 0]} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Leaf position={[0.1, -0.4, 0.1]} scale={[1.8, 1.2, 0.8]} rotation={[0.1, 0, 0]} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Food position={[0.1, -0.3, 1.2]} scale={[1.1, 1.1, 1.1]} rotation={[0, 0, 0]} />
       </Suspense>
 
       <group position={incensePosition} scale={[1.5, 1.5, 1.5]}>
